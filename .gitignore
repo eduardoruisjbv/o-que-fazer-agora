@@ -1,4 +1,4 @@
-*.bak
-*.bak-*
 *.zip
-*SavedVariables*
+*.luac
+graft/
+backups/

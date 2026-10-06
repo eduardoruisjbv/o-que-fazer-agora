@@ -1,0 +1,16 @@
+## Interface: 120100
+## Title: Just do it
+## Notes: Uma direção para sua próxima atividade. Protótipo de viabilidade para WoW Retail.
+## Author: Eduardo Rui
+## Version: 0.2.3
+## IconTexture: 4635196
+## SavedVariablesPerCharacter: JustDoItDB
+
+Core.lua
+Readings.lua
+Journal.lua
+Planner.lua
+Automation.lua
+Compass.lua
+UI.lua
+Bootstrap.lua
