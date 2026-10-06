@@ -1,0 +1,8 @@
+package-as: JustDoIt
+license-output: LICENSE
+ignore:
+    - .gitignore
+    - README.md
+    - CHANGELOG.md
+    - docs
+    - tests

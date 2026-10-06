@@ -8,7 +8,8 @@ Nome definitivo: **Just do it**. Alvo: WoW Retail 12.x / Midnight. Lua.
 - Estado real do jogo e descoberta pela API; sem catálogo manual de conteúdo. IDs de enumeração/dificuldade e parâmetros de comportamento não são catálogo de missões/itens.
 - Uma atividade principal, com uma secundária de mundo aberto na bússola. Fila/formação de grupo pode ser atividade em paralelo.
 - Painel no minimapa, sem popup surpresa e sem entrada automática em fila.
-- Semi-auto inicia ativo ao entrar no jogo. Auto depende de consentimento.
+- Auto inicia ativo por padrão. Semi-auto mantém leitura, sugestões e orientação automáticas, sem marcar o tracker nem substituir a seta/pin nativos.
+- Aceitar, selecionar, concluir ou receber recompensa de missão é sempre uma ação do jogador nos dois modos.
 
 ## Nivelamento
 
@@ -67,7 +68,7 @@ Nome definitivo: **Just do it**. Alvo: WoW Retail 12.x / Midnight. Lua.
 - No modo Auto, o pin e o indicador nativo complementam a bússola e apontam automaticamente para a sugestão principal. Ponto próprio pode identificar o addon no mapa; capacidade de modificar nome/ícone da seta nativa precisa ser verificada.
 - Não substituir ponto manual antes de **Seguir sugestão**. Novo ponto manual devolve controle da seta ao jogador; seguir novamente permite retomada.
 - Semi-auto escolhe/atualiza automaticamente os objetivos, mas não altera tracker nem seta.
-- Auto também aceita todas as missões oferecidas pelo NPC com quem o jogador conversar e entrega missões concluídas. Não iniciar conversa automaticamente.
+- Auto não seleciona, aceita nem entrega missões ao conversar com NPCs. A conversa e as ações de missão ficam com o jogador.
 - Recompensa automática exige permissão adicional, desativada por padrão. Quando ativa, maior ilvl compatível com especialização atual, mesmo sem melhoria; empate permanece manual.
 - **Outra sugestão** ignora apenas atividade exata/dificuldade por 45 minutos.
 - Configuração entra no MVP com ambos os modos. Opções futuras aparecem quando suas funções forem implementadas.

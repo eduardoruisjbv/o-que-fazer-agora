@@ -52,6 +52,9 @@ end
 local function IsCampaign(questID, logInfo, line)
     if J.Bool(J.Field(line, "isCampaign")) then return true end
     local campaignID = J.Number(J.Field(logInfo, "campaignID"))
+    if not campaignID or campaignID <= 0 then
+        campaignID = J.Number(API("C_CampaignInfo", "GetCampaignID", questID))
+    end
     if campaignID and campaignID > 0 then return true end
     local ns = C_CampaignInfo
     if ns and ns.IsCampaignQuest and J.Bool(API("C_CampaignInfo", "IsCampaignQuest", questID)) then return true end
@@ -79,7 +82,7 @@ function J.ReadQuests(state)
     end
 
     local function Add(id, point, line)
-        if not J.Number(id) or id <= 0 then return end
+        if not J.Number(id) or id <= 0 or (J.completedQuests and J.completedQuests[id]) then return end
         local info = log[id]
         if not info and J.Bool(API("C_QuestLog", "IsQuestFlaggedCompleted", id))
             and not (C_TaskQuest and J.Bool(API("C_TaskQuest", "IsActive", id))) then return end
@@ -91,7 +94,8 @@ function J.ReadQuests(state)
         q.worldQuest = C_QuestLog and C_QuestLog.IsWorldQuest
             and J.Bool(API("C_QuestLog", "IsWorldQuest", id)) or false
         q.campaign = q.campaign or IsCampaign(id, info, line)
-        q.campaignID = J.Number(J.Field(info, "campaignID"))
+        q.campaignID = J.Number(API("C_CampaignInfo", "GetCampaignID", id))
+        if q.campaignID and q.campaignID > 0 then campaigns[q.campaignID] = true end
         q.turnIn = q.accepted and J.Bool(API("C_QuestLog", "ReadyForTurnIn", id))
         q.action = q.turnIn and "Entregar" or (q.accepted and "Cumprir objetivo" or "Aceitar")
         local tag = API("C_QuestLog", "GetQuestTagInfo", id)
@@ -156,7 +160,11 @@ function J.ReadQuests(state)
             end
         end
     end
-    for id in pairs(log) do Add(id) end
+    for id in pairs(log) do
+        -- Accepted campaign steps may not occur in the available-offer list.
+        local line = currentMap and API("C_QuestLine", "GetQuestLineInfo", id, currentMap)
+        Add(id, nil, line)
+    end
 
     local quests = {}
     for _, q in pairs(byID) do

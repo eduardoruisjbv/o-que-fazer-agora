@@ -4,7 +4,7 @@ Addon individual de WoW Retail 12.x para sugerir a próxima atividade do persona
 
 ## Estado da entrega
 
-**0.2.4 — primeira Release, com modos Semi-auto e Auto.** Implementa as três leituras combinadas, orientação por missões e automações com consentimento. A recomendação completa PvE por equipamento continua pendente.
+**0.2.4 — primeira Release, com modos Auto e Semi-auto.** Implementa as três leituras combinadas e orientação por missões. Auto inicia por padrão; interações de missão permanecem manuais nos dois modos. A recomendação completa PvE por equipamento continua pendente.
 
 - Painel aberto pelo minimapa ou `/jdi`, sem popup de login. Seletor **Modo: Semi-auto / Auto** no topo e controles na aba Configuração. Botão circular compacto com ícone nativo de bússola (FileDataID 4635196).
 - Leitura de campanhas disponíveis e presentes no log, capítulo atual e impedimentos.
@@ -56,14 +56,14 @@ Após validar as três leituras no cliente, investigar custos reais de upgrade/c
 
 O resumo completo das regras está em [docs/DESIGN.md](docs/DESIGN.md). As referências de API estão em [docs/API.md](docs/API.md).
 
-O modo Auto aceita/entrega missões no NPC com quem o jogador conversar. Escolha de recompensa é uma permissão separada, desativada inicialmente: escolhe o maior ilvl compatível com a especialização ativa, deixando empates, dados incompletos e escolhas de moeda para o jogador. Entregas que cobram gold preservam a confirmação nativa. Não entra em filas nem recomenda upgrades fictícios a partir do loot lido. No nível máximo, a interface identifica sua sugestão como **prévia de mundo aberto**, enquanto o motor de equipamento aguarda a etapa 2.
+Os dois modos deixam seleção, aceitação, conclusão e recompensa de missões para o jogador. Auto rastreia as sugestões e atualiza a navegação nativa; Semi-auto mantém as mesmas sugestões e orientação pela bússola, preservando o tracker e a seta. Não entra em filas nem recomenda upgrades fictícios a partir do loot lido. No nível máximo, a interface identifica sua sugestão como **prévia de mundo aberto**, enquanto o motor de equipamento aguarda a etapa 2.
 
 ## Usar o seletor de modo
 
-1. Execute `/jdi` e abra **Modo: Semi-auto** no topo, ou clique com o botão direito no minimapa para abrir Configuração.
-2. Selecione **Auto**. Na primeira ativação deste personagem, o consentimento descreve rastreamento, aceitação e entrega de missões. Cancelar mantém o modo anterior.
-3. Para escolher itens automaticamente, ative a permissão **Escolher recompensa automaticamente** na Configuração e confirme seu próprio consentimento. Ela é desativada por padrão.
-4. Voltar a **Semi-auto** interrompe as automações e remove somente rastreamentos ainda pertencentes ao addon.
+1. Auto já inicia ativo. Execute `/jdi` para conferir o modo no topo, ou clique com o botão direito no minimapa para abrir Configuração.
+2. Selecione **Semi-auto** para manter sugestões e orientação pela bússola sem alterar rastreamentos ou a seta/pin nativos.
+3. Em qualquer modo, escolha, aceite, conclua e receba recompensas de missões manualmente.
+4. Voltar a **Auto** retoma o rastreamento das sugestões e a navegação nativa, respeitando marcações e pins manuais.
 
 As verificações locais de consentimento, propriedade das marcações e escolha de recompensa não substituem testes no cliente 12.x.
 

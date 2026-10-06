@@ -1,15 +1,15 @@
 local addonName, J = ...
-J.name, J.version = addonName, "0.2.4"
+J.name, J.version = addonName, "0.2.9"
 J.icon = 4635196 -- Native WoW Explorer Compass trinket icon (FileDataID).
 J.readings, J.errors, J.listeners = {}, {}, {}
 J.primaryColor = {0.64, 0.71, 0.74} -- Muted blue grey.
 J.secondaryColor = {0.73, 0.66, 0.55} -- Soft bronze.
 J.defaults = {
-    compass = true, minimap = true, minimapAngle = 220,
+    compass = true, minimap = true, minimapAngle = 220, showZoneIndicators = false,
     corridor = 180, closeRadius = 150, closeRatio = 0.35,
     switchMargin = 0.15, switchSeconds = 4,
     compassWidth = 480, compassY = -40,
-    mode = "semi", autoConsent = 0, autoRewards = false,
+    mode = "auto", autoConsent = 1, autoRewards = false,
 }
 
 function J.Plain(value)
@@ -80,9 +80,12 @@ function J.InitDB()
     for key, value in pairs(J.defaults) do
         if type(J.db.settings[key]) ~= type(value) then J.db.settings[key] = value end
     end
-    if J.db.settings.mode ~= "auto" or J.db.settings.autoConsent ~= 1 then
-        J.db.settings.mode = "semi"
+    if J.db.settings.mode ~= "auto" and J.db.settings.mode ~= "semi" then
+        J.db.settings.mode = J.defaults.mode
     end
+    -- Quest interaction is always manual in both modes; clear obsolete consent.
+    J.db.settings.autoConsent = 1
+    J.db.settings.autoRewards = false
     -- Clamp persisted values before they reach frame sizes or geometry.
     local ranges = {corridor = {25, 600}, closeRadius = {25, 500},
         closeRatio = {0.1, 0.8}, switchMargin = {0.05, 0.5}, switchSeconds = {1, 15},

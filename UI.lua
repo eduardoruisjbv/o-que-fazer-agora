@@ -96,12 +96,9 @@ function J.UpdateModeUI()
     ui.autoMode:SetText(automatic and "Auto (ativo)" or "Auto")
     ui.modeQuick:SetText(automatic and "Modo: Auto" or "Modo: Semi-auto")
     ui.modeHelp:SetText(automatic
-        and "Rastreia as sugestões e usa o pin e o indicador da Blizzard automaticamente. Preserva pins manuais e aceita/entrega missões ao conversar com um NPC."
-        or "Escolhe os objetivos e orienta pela bússola, preservando seu rastreamento e sua seta.")
-    ui.rewardPermission:SetChecked(J.db.settings.autoRewards)
-    ui.rewardPermission:SetEnabled(automatic)
-    ui.rewardPermission.label:SetTextColor(automatic and 0.8 or 0.45, automatic and 0.8 or 0.45, automatic and 0.8 or 0.45)
-    local detail = automatic and "Auto ativo · marcações manuais preservadas." or "Semi-auto · orientação apenas pela bússola."
+        and "Rastreia as sugestões e usa o pin e o indicador da Blizzard automaticamente. Preserva pins manuais; aceitar e entregar missões fica sempre com você."
+        or "Escolhe objetivos e orienta automaticamente pela bússola, preservando seu rastreamento e sua seta. Missões ficam sempre com você.")
+    local detail = automatic and "Auto ativo · marcações manuais preservadas." or "Semi-auto · orientação automática pela bússola."
     ui.hint:SetText(detail .. (J.autoStatus and ("\n" .. J.autoStatus) or "")
         .. "\nShift + arrastar move a bússola. Outra sugestão ignora a atividade por 45 minutos.")
 end
@@ -329,25 +326,16 @@ function J.CreateUI()
     frame.semiMode = Button(settings, "Semi-auto", 24, -34, 175, function() J.RequestMode("semi") end)
     frame.autoMode = Button(settings, "Auto", 210, -34, 175, function() J.RequestMode("auto") end)
     frame.modeHelp = Text(settings, "GameFontHighlightSmall", "TOPLEFT", 24, -75, 560)
-    local permission = CreateFrame("CheckButton", nil, settings, "UICheckButtonTemplate")
-    permission:SetPoint("TOPLEFT", 25, -130)
-    permission.label = permission:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    permission.label:SetPoint("LEFT", permission, "RIGHT", 2, 0)
-    permission.label:SetText("Escolher recompensa automaticamente")
-    permission:SetScript("OnClick", function(self)
-        local enabled = self:GetChecked() and true or false
-        self:SetChecked(J.db.settings.autoRewards)
-        J.RequestAutoRewards(enabled)
-    end)
-    frame.rewardPermission = permission
-    Checkbox(settings, "Mostrar bússola", "compass", -177, J.LayoutCompass)
-    Checkbox(settings, "Mostrar botão no minimapa", "minimap", -207, function()
+    Checkbox(settings, "Mostrar bússola", "compass", -145, J.LayoutCompass)
+    Checkbox(settings, "Mostrar botão no minimapa", "minimap", -175, function()
         if J.minimap then J.minimap:SetShown(J.db.settings.minimap) end
     end)
-    Slider(settings, "Largura do corredor (m)", "corridor", 25, 600, 25, -270)
-    Slider(settings, "Raio muito próximo (m)", "closeRadius", 25, 500, 25, -332)
-    Slider(settings, "Distância relativa à campanha", "closeRatio", 0.1, 0.8, 0.05, -394, "%.2f")
-    Slider(settings, "Estabilidade antes de trocar (s)", "switchSeconds", 1, 15, 1, -456)
+    Checkbox(settings, "Mostrar indicadores de zona da Blizzard (topo)", "showZoneIndicators", -205,
+        J.UpdateBlizzardWidgetLayout)
+    Slider(settings, "Largura do corredor (m)", "corridor", 25, 600, 25, -268)
+    Slider(settings, "Raio muito próximo (m)", "closeRadius", 25, 500, 25, -330)
+    Slider(settings, "Distância relativa à campanha", "closeRatio", 0.1, 0.8, 0.05, -392, "%.2f")
+    Slider(settings, "Estabilidade antes de trocar (s)", "switchSeconds", 1, 15, 1, -454)
     J.ui = frame
     J.UpdateModeUI()
     frame.pages.now:Show()

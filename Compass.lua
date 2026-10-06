@@ -34,6 +34,12 @@ local function Marker(parent, color, symbol)
     return marker
 end
 
+function J.UpdateSessionCounter()
+    if not J.compass or not J.compass.sessionCounter then return end
+    local count = J.db and J.Number(J.db.sessionQuests) or 0
+    J.compass.sessionCounter:SetText("Missões · " .. (count or 0))
+end
+
 function J.CreateCompass()
     local frame = CreateFrame("Frame", "JustDoItCompass", UIParent)
     frame:SetFrameStrata("MEDIUM")
@@ -56,6 +62,10 @@ function J.CreateCompass()
     frame.instanceHint:SetWidth(480)
     frame.instanceHint:SetTextColor(0.67, 0.68, 0.66, 0.75)
     frame.instanceHint:SetShadowOffset(1, -1)
+    frame.sessionCounter = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.sessionCounter:SetPoint("LEFT", frame, "RIGHT", 14, 4)
+    frame.sessionCounter:SetTextColor(0.67, 0.70, 0.71, 0.65)
+    frame.sessionCounter:SetShadowOffset(1, -1)
     local center = frame:CreateTexture(nil, "ARTWORK")
     center:SetColorTexture(0.88, 0.91, 0.93, 0.45)
     center:SetSize(1, 10)
@@ -91,7 +101,37 @@ function J.CreateCompass()
         J.TickCompass(dt)
     end)
     J.compass = frame
+    J.UpdateSessionCounter()
     J.LayoutCompass()
+end
+
+-- Hide only the native top-centre zone indicators. Alpha preserves the
+-- widget manager's visibility state and AzeriteUI's anchors across zones.
+function J.UpdateBlizzardWidgetLayout()
+    local widget = UIWidgetTopCenterContainerFrame
+    if not widget or not J.db then return end
+    if InCombatLockdown and InCombatLockdown() then return end
+    if widget.IsProtected and widget:IsProtected() then return end
+    if J.zoneWidget ~= widget then
+        J.zoneWidget = widget
+        J.zoneWidgetAlpha = J.Number(widget:GetAlpha()) or 1
+        if hooksecurefunc then
+            hooksecurefunc(widget, "SetAlpha", function(_, alpha)
+                if J.zoneWidgetMutation or J.zoneWidget ~= widget then return end
+                J.zoneWidgetAlpha = J.Number(alpha) or J.zoneWidgetAlpha
+                if not J.db.settings.showZoneIndicators then
+                    J.zoneWidgetMutation = true
+                    widget:SetAlpha(0)
+                    J.zoneWidgetMutation = nil
+                end
+            end)
+        end
+    end
+    local alpha = J.db.settings.showZoneIndicators and (J.zoneWidgetAlpha or 1) or 0
+    if J.Number(widget:GetAlpha()) == alpha then return end
+    J.zoneWidgetMutation = true
+    widget:SetAlpha(alpha)
+    J.zoneWidgetMutation = nil
 end
 
 function J.LayoutCompass()
@@ -100,6 +140,7 @@ function J.LayoutCompass()
     J.compass:SetPoint("TOP", UIParent, "TOP", 0, J.db.settings.compassY)
     J.compass:SetSize(J.db.settings.compassWidth, 44)
     J.TickCompass()
+    J.UpdateBlizzardWidgetLayout()
 end
 
 function J.TickCompass(elapsed)

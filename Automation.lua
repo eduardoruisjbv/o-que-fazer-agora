@@ -1,8 +1,7 @@
 local _, J = ...
-local CONSENT_VERSION = 1
 
 function J.AutoEnabled()
-    return J.db and J.db.settings.mode == "auto" and J.db.settings.autoConsent == CONSENT_VERSION
+    return J.db and J.db.settings.mode == "auto"
 end
 
 local function Mutate(callback)
@@ -34,7 +33,6 @@ end
 
 function J.SetMode(mode)
     if mode ~= "auto" and mode ~= "semi" then return end
-    if mode == "auto" and J.db.settings.autoConsent ~= CONSENT_VERSION then return end
     J.db.settings.mode = mode
     if mode == "auto" then
         -- Auto itself authorizes navigation. Keep an existing manual pin intact.
@@ -51,22 +49,6 @@ function J.SetMode(mode)
     J.SyncAutomation()
     J.Emit("mode")
 end
-
-StaticPopupDialogs.JUSTDOIT_AUTO = {
-    text = "Ativar o modo Auto do Just do it para este personagem?\n\n"
-        .. "O addon adicionará suas sugestões ao rastreamento, preservando marcações manuais. "
-        .. "Ao conversar com um NPC, aceitará as missões disponíveis e entregará as concluídas.\n\n"
-        .. "O pin e o indicador da Blizzard apontarão automaticamente para a sugestão principal. "
-        .. "Um pin manual seu tem prioridade. Não entra em filas. "
-        .. "Escolher recompensa automaticamente exige uma permissão separada.",
-    button1 = "Ativar Auto", button2 = "Cancelar", timeout = 0,
-    whileDead = true, hideOnEscape = true, preferredIndex = 3,
-    OnAccept = function(_, settings)
-        if not J.db or J.db.settings ~= settings then return end
-        settings.autoConsent = CONSENT_VERSION
-        J.SetMode("auto")
-    end,
-}
 
 StaticPopupDialogs.JUSTDOIT_REWARDS = {
     text = "Permitir a escolha automática de recompensa no modo Auto?\n\n"
@@ -86,12 +68,10 @@ StaticPopupDialogs.JUSTDOIT_REWARDS = {
 
 function J.RequestMode(mode)
     if mode == "semi" then
-        StaticPopup_Hide("JUSTDOIT_AUTO")
         StaticPopup_Hide("JUSTDOIT_REWARDS")
         J.SetMode("semi")
     elseif mode == "auto" then
-        if J.db.settings.autoConsent == CONSENT_VERSION then J.SetMode("auto")
-        else StaticPopup_Show("JUSTDOIT_AUTO", nil, nil, J.db.settings) end
+        J.SetMode("auto")
     end
 end
 
@@ -227,11 +207,28 @@ function J.InitAutomation()
     end
     if hooksecurefunc and C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
         hooksecurefunc(C_SuperTrack, "SetSuperTrackedQuestID", function(id)
-            if not J.autoMutation then
-                J.directionGranted, J.nativeKey, J.nativeQuestID = nil, nil, nil
-                J.db.nativeWaypointKey = nil
-                if J.Number(id) then J.db.ownedWatches[id] = nil end
+            if J.autoMutation then return end
+            local questID = J.Number(id)
+            -- Blizzard clears supertracking (ID 0) on turn-in/watch removal.
+            -- This is progression, not a request to suspend Auto navigation.
+            if not questID or questID <= 0 then
+                J.nativeQuestID = nil
+                return
             end
+            local primary = J.plan and J.plan.primary
+            if primary and primary.questID == questID then return end
+            -- Accepting a quest can also auto-select it before our event runs.
+            local knownAccepted = false
+            for _, q in ipairs(J.readings.quests or {}) do
+                if q.questID == questID and q.accepted then knownAccepted = true; break end
+            end
+            if not knownAccepted and J.Bool(J.API("C_QuestLog", "IsOnQuest", questID)) then
+                J.ScheduleReadings()
+                return
+            end
+            J.directionGranted, J.nativeKey, J.nativeQuestID = nil, nil, nil
+            J.db.nativeWaypointKey = nil
+            J.db.ownedWatches[questID] = nil
         end)
     end
     -- Recognize our saved pin after reload; preserve all other existing pins.
@@ -251,38 +248,11 @@ local function NPC()
 end
 
 function J.SelectNPCQuest()
-    if not J.AutoEnabled() or InCombat() or not NPC() then return end
-    for _, q in ipairs(J.Table(J.API("C_GossipInfo", "GetActiveQuests")) or {}) do
-        local id = J.Number(J.Field(q, "questID"))
-        if id and J.Bool(J.Field(q, "isComplete")) then
-            J.API("C_GossipInfo", "SelectActiveQuest", id)
-            return
-        end
-    end
-    local _, count = J.API("C_QuestLog", "GetNumQuestLogEntries")
-    local maximum = J.Number(J.API("C_QuestLog", "GetMaxNumQuestsCanAccept"))
-    if J.Number(count) and maximum and count >= maximum then return end
-    for _, q in ipairs(J.Table(J.API("C_GossipInfo", "GetAvailableQuests")) or {}) do
-        local id = J.Number(J.Field(q, "questID"))
-        if id and not J.Bool(J.Field(q, "isIgnored")) then
-            J.API("C_GossipInfo", "SelectAvailableQuest", id)
-            return
-        end
-    end
+    -- NPC quest selection is always a player action.
 end
 
 function J.SelectLegacyNPCQuest()
-    if not J.AutoEnabled() or InCombat() or not NPC() then return end
-    local active = J.Number(J.Call("GetNumActiveQuests", GetNumActiveQuests)) or 0
-    for index = 1, active do
-        local _, complete = J.Call("GetActiveTitle", GetActiveTitle, index)
-        if J.Bool(complete) then J.Call("SelectActiveQuest", SelectActiveQuest, index); return end
-    end
-    local available = J.Number(J.Call("GetNumAvailableQuests", GetNumAvailableQuests)) or 0
-    local _, count = J.API("C_QuestLog", "GetNumQuestLogEntries")
-    local maximum = J.Number(J.API("C_QuestLog", "GetMaxNumQuestsCanAccept"))
-    if J.Number(count) and maximum and count >= maximum then return end
-    if available > 0 then J.Call("SelectAvailableQuest", SelectAvailableQuest, 1) end
+    -- Legacy NPC quest selection is always a player action.
 end
 
 function J.RewardChoice(count, specID)
@@ -307,41 +277,11 @@ function J.RewardChoice(count, specID)
 end
 
 function J.TryQuestReward(attempt, pending)
-    if not J.AutoEnabled() or InCombat() then return end
-    local questID = J.Number(J.Call("GetQuestID", GetQuestID))
-    local npc = NPC()
-    if not questID or questID <= 0 or not npc then return end
-    if pending and (J.rewardPending ~= pending or pending.questID ~= questID or pending.npc ~= npc) then return end
-    -- Preserve Blizzard's own confirmation for quests charging money.
-    local money = J.Number(J.Call("GetQuestMoneyToGet", GetQuestMoneyToGet))
-    if not money or money > 0 then return end
-    local count = J.Number(J.Call("GetNumQuestChoices", GetNumQuestChoices))
-    if not count then return end
-    if count == 0 then J.rewardPending = nil; J.Call("GetQuestReward", GetQuestReward, 0); return end
-    if not J.db.settings.autoRewards then return end
-    local state = J.ReadCharacter()
-    local choice, loading = J.RewardChoice(count, state.specID)
-    if choice then
-        J.rewardPending = nil
-        J.Call("GetQuestReward", GetQuestReward, choice)
-    elseif loading and (attempt or 1) < 8 then
-        pending = pending or {questID = questID, npc = npc}
-        J.rewardPending = pending
-        C_Timer.After(0.3, function() J.TryQuestReward((attempt or 1) + 1, pending) end)
-    end
+    -- Quest rewards are always selected and accepted by the player.
 end
 
 function J.HandleAutomationEvent(event)
     if event == "PLAYER_REGEN_ENABLED" then J.SyncAutomation(); return end
     if event == "QUEST_FINISHED" or event == "GOSSIP_CLOSED" then J.rewardPending = nil; return end
-    if not J.AutoEnabled() or InCombat() then return end
-    if event == "GOSSIP_SHOW" then J.SelectNPCQuest()
-    elseif event == "QUEST_GREETING" then J.SelectLegacyNPCQuest()
-    elseif event == "QUEST_DETAIL" then
-        if NPC() then Mutate(function() J.Call("AcceptQuest", AcceptQuest) end) end
-    elseif event == "QUEST_PROGRESS" then
-        if NPC() and J.Bool(J.Call("IsQuestCompletable", IsQuestCompletable)) then
-            J.Call("CompleteQuest", CompleteQuest)
-        end
-    elseif event == "QUEST_COMPLETE" then J.TryQuestReward() end
+    -- Keep all quest offers, completions, and rewards under player control.
 end

@@ -10,6 +10,22 @@ function J.ScheduleReadings()
     end)
 end
 
+-- Quest offers arrive asynchronously after progression. Retry only during a
+-- short transition window, never poll the quest catalogue every HUD frame.
+function J.RefreshProgression()
+    J.requestedMap = nil
+    J.progressionGeneration = (J.progressionGeneration or 0) + 1
+    local generation = J.progressionGeneration
+    J.ScheduleReadings()
+    for _, delay in ipairs({1.5, 3, 6}) do
+        C_Timer.After(delay, function()
+            if not J.initialized or generation ~= J.progressionGeneration then return end
+            J.requestedMap = nil
+            J.ScheduleReadings()
+        end)
+    end
+end
+
 function J.Initialize()
     if J.initialized then return end
     if type(J.InitAutomation) ~= "function" then
@@ -17,6 +33,7 @@ function J.Initialize()
         return
     end
     J.InitDB()
+    J.db.sessionQuests = math.max(0, math.floor(J.Number(J.db.sessionQuests) or 0))
     J.InitAutomation()
     J.CreateUI()
     J.CreateCompass()
@@ -32,6 +49,7 @@ function J.Initialize()
     -- Quest reads are event-driven/debounced. This ticker recomputes distances
     -- against cached quest points only; the HUD animates at half game FPS.
     J.ticker = C_Timer.NewTicker(1, function()
+        J.UpdateBlizzardWidgetLayout()
         local inInstance = J.Bool(J.Call("IsInInstance", IsInInstance))
         if J.compass then
             if J.compass.inInstance ~= inInstance then J.compass.positionElapsed = 0.1 end
@@ -60,14 +78,36 @@ events:SetScript("OnEvent", function(_, event, ...)
         if loaded == "Blizzard_WorldMap" then J.SetupMapPins() end
     elseif event == "PLAYER_LOGIN" then J.Initialize()
     elseif not J.initialized then return
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        local isInitialLogin, isReloadingUI = ...
+        -- A new login starts a session; /reload and zoning retain its count.
+        if J.Bool(isInitialLogin) and not J.Bool(isReloadingUI) then
+            J.db.sessionQuests = 0
+            J.UpdateSessionCounter()
+        end
+        J.ScheduleReadings()
     elseif event == "QUESTLINE_UPDATE" then
         -- true asks for new map data; false means the asynchronous data is ready.
         if J.Bool(...) then J.requestedMap = nil end
         J.ScheduleReadings()
     elseif event == "QUEST_TURNED_IN" then
         local id = ...
-        if J.Number(id) then J.FinishActivity(id) end
-        J.ScheduleReadings()
+        if J.Number(id) then
+            J.completedQuests = J.completedQuests or {}
+            if not J.completedQuests[id] then
+                J.db.sessionQuests = (J.Number(J.db.sessionQuests) or 0) + 1
+                J.UpdateSessionCounter()
+            end
+            J.completedQuests[id] = true
+            J.FinishActivity(id)
+        end
+        J.RefreshProgression()
+    elseif event == "QUEST_ACCEPTED" then
+        local id = J.Number(...)
+        if id and J.completedQuests then J.completedQuests[id] = nil end
+        J.RefreshProgression()
+    elseif event == "QUEST_REMOVED" then
+        J.RefreshProgression()
     elseif event == "PLAYER_LOGOUT" then
         -- Discard unfinished samples; logout time is not activity duration.
         if J.db then J.Report() end

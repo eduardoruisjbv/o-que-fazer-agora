@@ -66,13 +66,11 @@ local function Quest(id, world)
 end
 J.plan = {primary = Quest(1), secondary = Quest(2)}
 J.SyncAutomation()
-Check(not watched[1] and watched[99], "semi-auto cannot mutate manual tracking")
+Check(not watched[1] and watched[99], "initial auto mode waits for tracking setup")
 J.SetMode("auto")
-Check(not J.AutoEnabled(), "auto cannot be enabled without consent")
-StaticPopupDialogs.JUSTDOIT_AUTO.OnAccept(nil, J.db.settings)
-Check(J.AutoEnabled() and watched[1] and watched[2], "consent activates real tracking")
+Check(J.AutoEnabled() and watched[1] and watched[2], "auto is enabled by default and tracks suggestions")
 Check(watched[99] and not J.db.ownedWatches[99], "pre-existing manual mark stays player-owned")
-Check(not J.db.settings.autoRewards, "auto does not grant reward-choice permission")
+Check(not J.db.settings.autoRewards, "quest rewards remain player-controlled")
 Check(pinWrites == 0, "auto activation does not overwrite player's pin")
 J.plan = {primary = Quest(3), secondary = Quest(4)}
 J.SyncAutomation()
@@ -109,8 +107,9 @@ J.plan = {primary = Quest(7, true), secondary = Quest(8)}
 watched[7] = "world"
 J.SyncAutomation()
 Check(not J.db.ownedWatches[7], "existing world quest stays manually owned even without quest watch type")
-StaticPopupDialogs.JUSTDOIT_REWARDS.OnAccept(nil, J.db.settings)
-Check(J.db.settings.autoRewards, "reward permission requires separate acceptance")
+J.db.settings.autoRewards = true -- Simulate an old saved setting.
+J.InitDB()
+Check(not J.db.settings.autoRewards, "obsolete automatic reward permission is cleared")
 J.RequestAutoRewards(false)
 Check(not J.db.settings.autoRewards, "reward permission can be revoked")
 
@@ -141,20 +140,20 @@ GetQuestReward = function() rewarded = rewarded + 1 end
 AcceptQuest = function() accepted = accepted + 1 end
 J.HandleAutomationEvent("QUEST_DETAIL")
 J.HandleAutomationEvent("QUEST_COMPLETE")
-Check(rewarded == 0 and accepted == 0, "no NPC context means no automatic quest actions")
+Check(rewarded == 0 and accepted == 0, "no NPC context produces no quest actions")
 npc = "npc-test"
 J.HandleAutomationEvent("QUEST_DETAIL")
 J.HandleAutomationEvent("QUEST_COMPLETE")
-Check(rewarded == 1 and accepted == 1, "consented NPC interaction permits accept and no-choice delivery")
+Check(rewarded == 0 and accepted == 0, "auto leaves quest acceptance and delivery to the player")
 GetNumQuestChoices = function() return 1 end
 J.HandleAutomationEvent("QUEST_COMPLETE")
-Check(rewarded == 1, "even a single choice requires reward permission")
+Check(rewarded == 0, "auto never selects or claims quest rewards")
 GetNumQuestChoices = function() return 0 end
 GetQuestMoneyToGet = function() return 100 end
 J.HandleAutomationEvent("QUEST_COMPLETE")
-Check(rewarded == 1, "money confirmation is preserved")
+Check(rewarded == 0, "quest completion remains a player action even when gold is required")
 J.SetMode("semi")
 J.HandleAutomationEvent("QUEST_DETAIL")
-Check(accepted == 1, "semi-auto does not accept NPC quests")
+Check(accepted == 0, "semi-auto leaves quests to the player too")
 
 print(passed .. " automation behavior checks passed. Real client validation remains required.")

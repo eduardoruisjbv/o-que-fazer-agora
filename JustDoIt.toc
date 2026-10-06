@@ -2,7 +2,7 @@
 ## Title: Just do it
 ## Notes: Orientação de campanha e missões com bússola e navegação nativa da Blizzard.
 ## Author: Eduardo Rui
-## Version: 0.2.4
+## Version: 0.2.9
 ## IconTexture: 4635196
 ## SavedVariablesPerCharacter: JustDoItDB
 
