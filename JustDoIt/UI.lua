@@ -37,6 +37,28 @@ local function CandidateCard(parent, x, y, heading, color)
     return box
 end
 
+function J.OpenInstanceSuggestion()
+    local q = J.plan and J.plan.instanced
+    if not q then return end
+    if InCombatLockdown and InCombatLockdown() then
+        J.Print("Abra o localizador de grupos após o combate.")
+        return
+    end
+    if C_AddOns and C_AddOns.LoadAddOn then J.API("C_AddOns", "LoadAddOn", "Blizzard_GroupFinder") end
+    local activityID = J.Number(J.API("C_LFGList", "GetActivityIDForQuestID", q.questID))
+    -- Open the native quest search only when a mapping exists and no listing
+    -- would need removal. Opening this panel never queues or forms a group.
+    if activityID and activityID > 0 and LFGListUtil_FindQuestGroup
+        and not J.Bool(J.API("C_LFGList", "HasActiveEntryInfo")) then
+        J.Call("LFGListUtil_FindQuestGroup", LFGListUtil_FindQuestGroup, q.questID, false)
+    elseif PVEFrame_ShowFrame then
+        J.Call("PVEFrame_ShowFrame", PVEFrame_ShowFrame, "GroupFinderFrame", LFGListPVEStub)
+        J.Print("Escolha o conteúdo no localizador de grupos: " .. q.title)
+    else
+        J.Print("O localizador de grupos não está disponível neste contexto.")
+    end
+end
+
 function J.UpdateUI()
     local ui = J.ui
     if not ui then return end
@@ -46,11 +68,13 @@ function J.UpdateUI()
         state.groupSize or 1, state.position and state.position.mapID or "?"))
     local function Card(box, q, empty)
         box.title:SetText(q and q.title or empty)
-        box.detail:SetText(q and (q.action .. " · " .. J.DistanceText(q.distance)
+        box.detail:SetText(q and ((q.waypointText and (q.waypointText .. "\n") or "") .. q.action .. " · " .. J.DistanceText(q.distance)
             .. (q.mapID and string.format(" · %.1f, %.1f", q.x * 100, q.y * 100) or " · sem coordenadas")) or "")
     end
     Card(ui.main, plan.primary, "Nenhum objetivo encontrado neste contexto")
     Card(ui.side, plan.secondary, "Sem secundária no trajeto")
+    ui.instance:SetShown(plan.instanced ~= nil)
+    ui.instance:SetText(plan.instanced and ("Instância · " .. plan.instanced.title .. " — Encontrar grupo") or "")
     local reason = plan.reason or "Aguardando os dados do personagem."
     if state.atMax then
         reason = "Prévia de mundo aberto. A escolha PvE por equipamento pertence à etapa 2."
@@ -254,11 +278,12 @@ function J.CreateUI()
     local now = frame.pages.now
     frame.main = CandidateCard(now, 20, 0, "P · PRINCIPAL", J.primaryColor)
     frame.side = CandidateCard(now, 20, -130, "S · SECUNDÁRIA", J.secondaryColor)
-    frame.reason = Text(now, "GameFontHighlightSmall", "TOPLEFT", 24, -267, 610)
-    frame.follow = Button(now, "Seguir sugestão", 20, -308, 150, J.FollowSuggestion)
-    frame.skip = Button(now, "Outra sugestão", 180, -308, 150, function() J.Ignore(J.plan and J.plan.primary) end)
-    Button(now, "Atualizar", 340, -308, 110, J.RefreshReadings)
-    frame.hint = Text(now, "GameFontDisableSmall", "TOPLEFT", 24, -355, 605)
+    frame.instance = Button(now, "", 20, -258, 620, J.OpenInstanceSuggestion)
+    frame.reason = Text(now, "GameFontHighlightSmall", "TOPLEFT", 24, -291, 610)
+    frame.follow = Button(now, "Seguir sugestão", 20, -324, 150, J.FollowSuggestion)
+    frame.skip = Button(now, "Outra sugestão", 180, -324, 150, function() J.Ignore(J.plan and J.plan.primary) end)
+    Button(now, "Atualizar", 340, -324, 110, J.RefreshReadings)
+    frame.hint = Text(now, "GameFontDisableSmall", "TOPLEFT", 24, -361, 605)
     local readings = frame.pages.readings
     frame.summary = Text(readings, "GameFontHighlight", "TOPLEFT", 24, -2, 610)
     Button(readings, "Executar leituras", 20, -50, 150, J.Probe)

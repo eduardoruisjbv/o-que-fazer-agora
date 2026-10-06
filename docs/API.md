@@ -49,3 +49,7 @@ O Auto coloca o destino principal com `C_Map.SetUserWaypoint` e ativa `C_SuperTr
 ## Missão aceita e etapas instanciadas (0.2.3)
 
 Missões não aceitas usam waypoint; missões aceitas de mundo aberto usam `C_SuperTrack.SetSuperTrackedQuestID`, com confirmação por `GetSuperTrackedQuestID`. O waypoint pertencente ao addon é removido ao trocar para a missão. A propriedade do waypoint é persistida para retomada após reload; pins manuais continuam preservados. Etapas instanciadas detectadas pelos tags disponíveis recebem texto discreto abaixo da bússola; dentro de instâncias os marcadores externos ficam ocultos. A classificação depende dos dados expostos pela API, e precisa de confirmação no cliente.
+
+## Passagens e busca de grupo (0.2.4)
+
+`GetNextWaypointText` fornece a instrução de passagem; `GetNextWaypointForMap` permite usar a etapa local da rota quando o destino está em outro mapa. Sem dados, não são inventadas posições de portais. A busca usa a associação real de `C_LFGList.GetActivityIDForQuestID` e `LFGListUtil_FindQuestGroup`, documentadas pelo [LFGList.lua da Blizzard](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_GroupFinder/Mainline/LFGList.lua). Sem associação ou com anúncio ativo, abre apenas o painel; não remove anúncios nem entra em filas.

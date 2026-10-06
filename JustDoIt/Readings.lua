@@ -100,9 +100,19 @@ function J.ReadQuests(state)
         local mapID = J.Number(J.Field(point, "mapID")) or currentMap
         local x, y = J.Number(J.Field(point, "x")), J.Number(J.Field(point, "y"))
         if q.accepted then
+            q.waypointText = J.String(API("C_QuestLog", "GetNextWaypointText", id))
+            if q.waypointText == "" then q.waypointText = nil end
             local nextMap, nextX, nextY = API("C_QuestLog", "GetNextWaypoint", id)
             if J.Number(nextMap) and J.Number(nextX) and J.Number(nextY) then
                 mapID, x, y = nextMap, nextX, nextY
+                -- Ask for the local leg when the final objective is on another map.
+                -- Blizzard can expose the portal/transport point on our current map.
+                if nextMap ~= currentMap then
+                    local localX, localY = API("C_QuestLog", "GetNextWaypointForMap", id, currentMap)
+                    if J.Number(localX) and J.Number(localY) then
+                        mapID, x, y = currentMap, localX, localY
+                    end
+                end
             end
         end
         if mapID and x and y and x >= 0 and x <= 1 and y >= 0 and y <= 1 then

@@ -161,7 +161,7 @@ function J.SyncAutomation()
         Mutate(ClearOwnedDirection)
         return
     end
-    if q.accepted and q.questID then
+    if q.accepted and q.questID and (not q.waypointText or not q.mapID or not q.x or not q.y) then
         -- Let Blizzard follow changing objectives/turn-in POIs for accepted quests.
         if J.nativeQuestID == q.questID
             and J.Number(J.API("C_SuperTrack", "GetSuperTrackedQuestID")) == q.questID then return end

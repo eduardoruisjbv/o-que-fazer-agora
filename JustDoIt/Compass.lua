@@ -127,7 +127,7 @@ function J.TickCompass(elapsed)
     frame.heading:SetText(not main and ""
         or not player and "Posição indisponível"
         or not facing and "Orientação indisponível"
-        or "")
+        or main.waypointText or "")
     local directions = {"N", "NO", "O", "SO", "S", "SE", "L", "NE"}
     if facing then
         for i, label in ipairs(frame.labels) do

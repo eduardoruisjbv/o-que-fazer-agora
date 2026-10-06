@@ -1,5 +1,5 @@
 local addonName, J = ...
-J.name, J.version = addonName, "0.2.3"
+J.name, J.version = addonName, "0.2.4"
 J.icon = 4635196 -- Native WoW Explorer Compass trinket icon (FileDataID).
 J.readings, J.errors, J.listeners = {}, {}, {}
 J.primaryColor = {0.64, 0.71, 0.74} -- Muted blue grey.
