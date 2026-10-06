@@ -1,89 +1,89 @@
-# Just do it — decisões da entrevista
+# Just do it — interview decisions
 
-Nome definitivo: **Just do it**. Alvo: WoW Retail 12.x / Midnight. Lua.
+Final name: **Just do it**. Target: WoW Retail 12.x / Midnight. Lua.
 
-## Princípios
+## Principles
 
-- Foco exclusivamente no personagem que usa o addon. Sem soma de benefícios de grupo, protocolos entre usuários ou requisitos de instalação para outros jogadores.
-- Estado real do jogo e descoberta pela API; sem catálogo manual de conteúdo. IDs de enumeração/dificuldade e parâmetros de comportamento não são catálogo de missões/itens.
-- Uma atividade principal, com uma secundária de mundo aberto na bússola. Fila/formação de grupo pode ser atividade em paralelo.
-- Painel no minimapa, sem popup surpresa e sem entrada automática em fila.
-- Auto inicia ativo por padrão. Semi-auto mantém leitura, sugestões e orientação automáticas, sem marcar o tracker nem substituir a seta/pin nativos.
-- Aceitar, selecionar, concluir ou receber recompensa de missão é sempre uma ação do jogador nos dois modos.
+- Focus only on the character using the addon. No group-benefit calculations, inter-player protocols, or installation requirements for other players.
+- Use actual game state and API discovery; no hand-maintained content catalog. Enumeration/difficulty IDs and behavior parameters are not quest/item catalogs.
+- One main activity, with one open-world secondary activity on the compass. Queues and group formation can run in parallel.
+- Minimap panel, no surprise popup, and no automatic queue entry.
+- Auto starts enabled by default. Semi-auto keeps automatic readings, suggestions, and guidance, without changing the tracker or native arrow/pin.
+- Accepting, selecting, completing, or collecting quest rewards is always a player action in both modes.
 
-## Nivelamento
+## Leveling
 
-- Campanha é prioritária, mesmo que conceda pouco ou nenhum XP.
-- Considerar campanhas aceitas, iniciadas e disponíveis para começar. Escolher pela próxima ação mais próxima; missão aceita desempata.
-- Próxima ação pode ser cumprir objetivo, entregar ou aceitar missão; não confundir a recompensa final de capítulo com a próxima etapa.
-- Sem identificação confiável da campanha/próxima etapa, usar missões do mapa atual como heurística e identificar a incerteza.
-- Campanha distante permanece no painel e na bússola. Não sugerir arbitrariamente uma nova zona.
-- Secundárias entram num corredor entre jogador e destino da campanha.
-- Uma secundária incompleta pode assumir o principal se estiver no corredor, dentro de raio curto e muito mais perto que a campanha.
-- Uma entrega com essa proximidade excepcional pode assumir o principal fora do corredor.
-- Reavaliar continuamente, mas trocar somente por vantagem clara mantida durante alguns segundos.
-- Grupo de dois ou mais pode receber masmorra aleatória como ação secundária. Qualquer bônus de XP ativo permite que ela substitua a campanha como principal.
-- Se aleatória estiver indisponível, escolher masmorra específica pela maior recompensa de XP confirmada; menor exigência de nível desempata. A descoberta de disponibilidade precisa de validação na 12.x.
+- Campaign progress takes priority, even when it awards little or no XP.
+- Consider accepted, started, and available campaigns. Choose the next action by proximity; an accepted quest breaks ties.
+- The next action may be completing an objective, turning in a quest, or accepting one; do not confuse the final chapter reward with the next step.
+- If the campaign or its next step cannot be identified reliably, use current-map quests as a heuristic and mark the uncertainty.
+- A distant campaign remains in the panel and on the compass. Do not arbitrarily suggest a new zone.
+- Secondary quests fall within a corridor between the player and the campaign destination.
+- An incomplete secondary quest may become primary if it is in the corridor, within a short radius, and much closer than the campaign.
+- A turn-in at this exceptional proximity may become primary even outside the corridor.
+- Reevaluate continuously, but switch only for a clear advantage that persists for several seconds.
+- A group of two or more may receive a random dungeon as a secondary activity. Any active XP bonus allows it to replace the campaign as primary.
+- If random queueing is unavailable, choose a specific dungeon by the largest confirmed XP reward; lower level requirement breaks ties. Availability discovery needs validation in 12.x.
 
-## Equipamento no nível máximo
+## Max-level gear
 
-- Nicho PvE no MVP. Percorrer slots do mais fraco ao mais forte até encontrar melhoria disponível.
-- Especialização ativa, independentemente da seleção de saque.
-- Compatibilidade com especialização e ilvl são os critérios do MVP; sem pesos de atributos, efeitos ou conjuntos.
-- Melhoria exige **mais de +3 ilvl**, não +3 inclusivo.
-- Comparar com o ilvl alcançável do item equipado usando recursos realmente disponíveis; o máximo teórico da trilha não equivale a upgrade financiado.
-- Ler loot pelo Encounter Journal e recompensas reais do jogo. Ilvl por dificuldade exige validação; não inventar valores quando ausentes.
-- Entre atividades que melhorem o mesmo slot, escolher a mais rápida; ganho de ilvl desempata. Esta decisão final dá precedência à duração sobre o ganho esperado discutido anteriormente.
-- Sem histórico, mundo aberto vence instância quando ambos melhoram o slot. Entre opções do mesmo tipo, maior ganho de ilvl.
-- Crests podem motivar conteúdo que viabilize upgrade; não sugerir ir gastar as crests no NPC.
-- Ler lockouts, atividades semanais e Great Vault. Por boss e dificuldade quando essa distinção for necessária.
-- Vault é alternativa após esgotar melhoria direta. Preferir opção com maior ilvl dentro da progressão permitida; menor esforço desempata.
+- PvE-only niche for the MVP. Check slots from weakest to strongest until an available upgrade is found.
+- Use the active specialization, regardless of loot specialization.
+- Class/spec compatibility and item level are the MVP criteria; no stat, effect, or set weighting.
+- An upgrade requires **more than +3 item levels**, not an inclusive +3.
+- Compare against the achievable upgrade level of the equipped item using resources actually available; the track's theoretical maximum is not the same as a funded upgrade.
+- Read loot through the Encounter Journal and actual game rewards. Item level by difficulty requires validation; do not invent missing values.
+- Among activities that upgrade the same slot, choose the fastest; item-level gain breaks ties. This final decision gives duration precedence over expected gain discussed earlier.
+- Without history, open-world content wins over an instance when both improve the slot. Among options of the same type, prefer the greater item-level gain.
+- Crests can motivate content that enables upgrades; do not suggest going to spend crests at an NPC.
+- Read lockouts, weekly activities, and Great Vault. Track boss and difficulty when the distinction is needed.
+- Vault is an alternative after direct upgrades are exhausted. Prefer the highest item level within allowed progression; lower effort breaks ties.
 
-## Tipo de conteúdo e dificuldade
+## Content type and difficulty
 
-- 1–2 jogadores: missões e Delves.
-- 3–5 jogadores: masmorras e Míticas.
-- 6 ou mais: raids.
-- As faixas são limites obrigatórios. Usar Group Finder para completar equipe em conteúdo organizado com três ou mais jogadores.
-- Masmorra Normal/Heroica usa fila automática quando disponível. Raid Finder é a dificuldade de raid com fila; Normal/Heroica/Mítica exigem grupo organizado.
-- Histórico orienta dificuldade. Sem histórico, começar na dificuldade de entrada: Normal, LFR ou primeiro tier disponível de Delve.
-- Avançar quando a atual já tiver sido concluída e não oferecer melhoria elegível em nenhum slot, incluindo drops/crests.
-- Reaproveitar histórico em novas temporadas, restrito aos conteúdos/dificuldades disponíveis. Não tratar conclusão antiga como disponibilidade atual.
+- 1–2 players: quests and Delves.
+- 3–5 players: dungeons and Mythic+.
+- 6 or more: raids.
+- These ranges are strict limits. Use Group Finder to fill an organized group for content requiring three or more players.
+- Normal/Heroic dungeons use automatic queueing when available. Raid Finder is the queued raid difficulty; Normal/Heroic/Mythic require an organized group.
+- History guides difficulty. Without history, start at the entry difficulty: Normal, LFR, or the first available Delve tier.
+- Advance when the current difficulty is complete and offers no eligible upgrade in any slot, including drops/crests.
+- Reuse history in new seasons, limited to content/difficulties that are available. Old completions do not imply current availability.
 
-## Paralelismo e histórico
+## Parallel activity and history
 
-- Medir duração total desde aceitar a sugestão até concluir: deslocamento, fila, formação de grupo e execução.
-- Fila pode correr enquanto o personagem faz mundo aberto. Registrar atividades em paralelo, sem tratar uma como abandono da outra.
-- Enquanto espera, orientar campanha. No máximo, concluir as etapas disponíveis da campanha da expansão atual que possam ser feitas no mundo aberto.
-- Depois dessas etapas, priorizar missões que melhorem equipamento; depois as demais por proximidade.
-- Missão de mundo aberto fica em destaque no painel, instância como indicação menor de **em fila**.
-- Entrar na instância pausa bússola de mundo aberto; sair retoma com reavaliação.
-- Sem melhoria direta nem progresso útil no Vault, sugerir entretenimento repetível e sinalizar que não há melhoria prevista. Proximidade/duração vêm primeiro; frequência de realização desempata.
+- Measure total duration from accepting a suggestion through completion: travel, queue, group formation, and the activity itself.
+- A queue can run while the character does open-world content. Record parallel activities without treating one as abandonment of the other.
+- While waiting, guide campaign progress. At most, complete available current-expansion campaign steps that can be done in the open world.
+- After those steps, prioritize quests that improve gear; then choose other quests by proximity.
+- Highlight the open-world quest in the panel, with the instance shown as a smaller **queued** item.
+- Entering an instance pauses the open-world compass; leaving resumes it after reevaluation.
+- With no direct upgrades or useful Vault progress, suggest repeatable entertainment and state that no upgrade is expected. Proximity/duration come first; completion frequency breaks ties.
 
-## Rastreamento, seta e consentimento
+## Tracking, arrow, and consent
 
-- Bússola horizontal, principal azul acinzentado e secundária bronze suave. P/S também distinguem papéis sem depender só de cor.
-- Modo auto adiciona as duas sugestões ao tracker, preservando todas as escolhas manuais. Sem espaço, orientar apenas pela bússola.
-- Ao trocar sugestões, remover somente marcações antigas pertencentes ao addon. Se o jogador assumir a marcação, preservá-la.
-- No modo Auto, o pin e o indicador nativo complementam a bússola e apontam automaticamente para a sugestão principal. Ponto próprio pode identificar o addon no mapa; capacidade de modificar nome/ícone da seta nativa precisa ser verificada.
-- Não substituir ponto manual antes de **Seguir sugestão**. Novo ponto manual devolve controle da seta ao jogador; seguir novamente permite retomada.
-- Semi-auto escolhe/atualiza automaticamente os objetivos, mas não altera tracker nem seta.
-- Auto não seleciona, aceita nem entrega missões ao conversar com NPCs. A conversa e as ações de missão ficam com o jogador.
-- Recompensa automática exige permissão adicional, desativada por padrão. Quando ativa, maior ilvl compatível com especialização atual, mesmo sem melhoria; empate permanece manual.
-- **Outra sugestão** ignora apenas atividade exata/dificuldade por 45 minutos.
-- Configuração entra no MVP com ambos os modos. Opções futuras aparecem quando suas funções forem implementadas.
+- Horizontal compass, muted blue-gray primary marker, soft bronze secondary marker. P/S also distinguish roles without relying on color alone.
+- Auto adds both suggestions to the tracker while preserving all manual choices. If there is no room, use the compass only.
+- When suggestions change, remove only old marks owned by the addon. If the player takes ownership of a mark, preserve it.
+- In Auto, a pin and the native indicator complement the compass and point to the primary suggestion automatically. A custom point can identify the addon on the map; the ability to change the native arrow's label/icon needs verification.
+- Do not replace a manual point until **Follow Suggestion** is selected. A new manual point returns arrow control to the player; choosing Follow again allows the addon to resume.
+- Semi-auto selects/updates objectives automatically but does not change the tracker or arrow.
+- Auto does not select, accept, or turn in quests during NPC conversations. The conversation and quest actions remain with the player.
+- Automatic reward selection requires separate permission, disabled by default. When enabled, choose the highest item level compatible with the active specialization, even if it is not an upgrade; ties remain manual.
+- **Another Suggestion** ignores only the exact activity/difficulty for 45 minutes.
+- Settings ship in the MVP with both modes. Future options appear when their features are implemented.
 
-## Prova de viabilidade
+## Feasibility proof
 
-1. Ler campanha atual; listar missões do mapa com coordenadas; consultar loot de uma masmorra.
-2. Depois de confirmar em cliente real, validar bússola, automações e dados de equipamento/progressão antes de concluir o MVP.
+1. Read the current campaign, list current-map quests with coordinates, and inspect one dungeon's loot.
+2. After confirming those reads in a real client, validate the compass, automation, and gear/progression data before declaring the MVP complete.
 
-Investigar alternativas para funções restringidas pela API; não afirmar funcionamento com base apenas em compilação ou mocks.
+Investigate alternatives for API-restricted functions; do not claim they work based only on compilation or mocks.
 
-Parâmetros iniciais ajustáveis do protótipo: corredor 180 m, raio curto 150 m, proximidade relativa 35%, margem de troca 15%, persistência 4 s. São valores de calibração escolhidos para a primeira execução, não dados de conteúdo nem decisões fechadas pelo usuário.
+Initial adjustable prototype parameters: 180 m corridor, 150 m short radius, 35% relative proximity, 15% switch margin, and 4 s persistence. These are calibration values chosen for the first run, not content data or user-approved final decisions.
 
-## Fora do MVP
+## Outside the MVP
 
-- PvP e Misto configuráveis; slot mais fraco primeiro, eventos como desempate em PvP.
-- Ouro direto quando não houver ganho de ilvl; recompensa confirmada acima do limite configurável, inicialmente 800 gold. Sem estimar Auction House.
-- Reputação, conquistas e colecionáveis como fallback de progresso longo.
+- Configurable PvP and Mixed modes; weakest slot first, with events as tie-breakers in PvP.
+- Direct gold when no item-level gain is available; confirmed rewards above a configurable threshold, initially 800 gold. No Auction House estimates.
+- Reputation, achievements, and collectibles as long-term progression fallbacks.

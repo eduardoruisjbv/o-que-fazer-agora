@@ -41,14 +41,14 @@ function J.Field(value, key)
 end
 
 function J.Error(key, message)
-    J.errors[key] = J.String(message) or "Dado protegido ou leitura indisponível."
+    J.errors[key] = J.String(message) or "Protected data or reading unavailable."
 end
 
 -- Do not compare, format, serialize, or calculate with secret values in 12.x.
 -- Nil is a legitimate empty answer; an unavailable/failed API is recorded separately.
 function J.Call(key, fn, ...)
     if type(fn) ~= "function" then
-        J.Error(key, "API indisponível neste cliente.")
+        J.Error(key, "API unavailable in this client.")
         return nil
     end
     local function Pack(...) return {n = select("#", ...), ...} end
@@ -141,7 +141,7 @@ function J.Ignore(candidate)
 end
 
 function J.DistanceText(distance)
-    if not J.Number(distance) then return "distância indisponível" end
+    if not J.Number(distance) then return "distance unavailable" end
     if distance >= 1000 then return string.format("%.1f km", distance / 1000) end
     return string.format("%d m", distance)
 end

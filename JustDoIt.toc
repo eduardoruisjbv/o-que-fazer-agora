@@ -1,6 +1,6 @@
 ## Interface: 120100
 ## Title: Just do it
-## Notes: Orientação de campanha e missões com bússola e navegação nativa da Blizzard.
+## Notes: Campaign and quest guidance with a compass and native Blizzard navigation.
 ## Author: Eduardo Rui
 ## Version: 0.2.9
 ## IconTexture: 4635196

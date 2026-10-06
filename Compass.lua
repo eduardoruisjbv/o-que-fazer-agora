@@ -24,7 +24,7 @@ local function Marker(parent, color, symbol)
     marker:SetScript("OnEnter", function(self)
         if not self.candidate then return end
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-        GameTooltip:AddLine("Just do it · " .. (self.primary and "Principal" or "Secundária"), unpack(color))
+        GameTooltip:AddLine("Just do it · " .. (self.primary and "Primary" or "Secondary"), unpack(color))
         GameTooltip:AddLine(self.candidate.title, 1, 1, 1, true)
         GameTooltip:AddLine(self.candidate.action .. " · " .. J.DistanceText(self.candidate.distance), 0.8, 0.8, 0.8)
         GameTooltip:Show()
@@ -37,7 +37,7 @@ end
 function J.UpdateSessionCounter()
     if not J.compass or not J.compass.sessionCounter then return end
     local count = J.db and J.Number(J.db.sessionQuests) or 0
-    J.compass.sessionCounter:SetText("Missões · " .. (count or 0))
+    J.compass.sessionCounter:SetText("Quests · " .. (count or 0))
 end
 
 function J.CreateCompass()
@@ -163,11 +163,11 @@ function J.TickCompass(elapsed)
     local main, side = plan.primary, plan.secondary
     local instanceQuest = plan.instanced
     frame.instanceHint:SetText(instanceQuest
-        and ((instanceQuest.campaign and "Campanha · " or "") .. "Instância · " .. instanceQuest.title) or "")
+        and ((instanceQuest.campaign and "Campaign · " or "") .. "Instance · " .. instanceQuest.title) or "")
     frame.instanceHint:SetShown(instanceQuest ~= nil)
     frame.heading:SetText(not main and ""
-        or not player and "Posição indisponível"
-        or not facing and "Orientação indisponível"
+        or not player and "Position unavailable"
+        or not facing and "Heading unavailable"
         or main.waypointText or "")
     local directions = {"N", "NO", "O", "SO", "S", "SE", "L", "NE"}
     if facing then

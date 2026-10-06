@@ -2,18 +2,18 @@ local _, J = ...
 
 local function LoadJournal()
     if InCombatLockdown and InCombatLockdown() then
-        J.Error("journal", "Faça a leitura do Encounter Journal fora de combate.")
+        J.Error("journal", "Read the Encounter Journal out of combat.")
         return false
     end
     if EncounterJournal and EncounterJournal:IsShown() then
-        J.Error("journal", "Feche o Encounter Journal antes de consultar; seus filtros serão preservados.")
+        J.Error("journal", "Close the Encounter Journal before querying; its filters will be preserved.")
         return false
     end
     if not EJ_GetInstanceByIndex then
         J.API("C_AddOns", "LoadAddOn", "Blizzard_EncounterJournal")
     end
     if not EJ_GetInstanceByIndex or not EJ_GetNumLoot or not C_EncounterJournal then
-        J.Error("journal", "Encounter Journal ainda não está disponível neste cliente.")
+        J.Error("journal", "The Encounter Journal is not available in this client yet.")
         return false
     end
     return true
@@ -64,7 +64,7 @@ function J.DiscoverDungeons()
                 local id, name, _, _, _, _, _, _, _, _, mapID =
                     J.Call("EJ_GetInstanceByIndex", EJ_GetInstanceByIndex, index, false)
                 if not J.Number(id) then break end
-                dungeons[#dungeons + 1] = {id = id, name = J.String(name) or "Masmorra #" .. id,
+                dungeons[#dungeons + 1] = {id = id, name = J.String(name) or "Dungeon #" .. id,
                     tier = tier, mapID = J.Number(mapID)}
             end
             if #dungeons > 0 then return dungeons end
@@ -73,7 +73,7 @@ function J.DiscoverDungeons()
     end)
     if not result then return false end
     J.dungeons, J.dungeonIndex = result, 1
-    if #result == 0 then J.Error("journal", "O jogo não retornou masmorras nos tiers consultados.") end
+    if #result == 0 then J.Error("journal", "The game returned no dungeons in the queried tiers.") end
     J.Emit("journal")
     return #result > 0
 end
@@ -92,7 +92,7 @@ function J.ReadLoot(dungeon, difficulty, attempt, generation)
         local valid = J.Call("EJ_IsValidInstanceDifficulty", EJ_IsValidInstanceDifficulty, difficulty)
         if not J.Bool(valid) then
             return {dungeon = dungeon, difficulty = difficulty, items = {},
-                message = "Esta dificuldade não está disponível para a masmorra selecionada."}
+                message = "This difficulty is unavailable for the selected dungeon."}
         end
         J.Call("EJ_SetDifficulty", EJ_SetDifficulty, difficulty)
         local state = J.readings.state or J.ReadCharacter()
@@ -145,8 +145,8 @@ function J.Probe()
 end
 
 local function Value(value)
-    if value == nil then return "indisponível" end
-    if type(value) == "boolean" then return value and "sim" or "não" end
+    if value == nil then return "unavailable" end
+    if type(value) == "boolean" then return value and "yes" or "no" end
     return tostring(value)
 end
 
@@ -154,51 +154,51 @@ function J.Report()
     local r, lines = J.readings, {}
     local function Add(...) local a = {...}; for i, v in ipairs(a) do a[i] = Value(v) end; lines[#lines + 1] = table.concat(a, " ") end
     local version, build, _, interface = J.Call("GetBuildInfo", GetBuildInfo)
-    Add("Just do it", J.version, "— relatório de viabilidade")
-    Add("Cliente:", version or "?", "build", build or "?", "interface", interface or "?")
-    Add("Coletado:", r.captured or 0, "(epoch; sem nome/GUID do personagem)")
+    Add("Just do it", J.version, "— feasibility report")
+    Add("Client:", version or "?", "build", build or "?", "interface", interface or "?")
+    Add("Captured:", r.captured or 0, "(epoch; no character name/GUID)")
     local state = r.state or {}
-    Add("Nível:", state.level or "?", "/", state.maxLevel or "?", "Grupo:", state.groupSize or 1)
-    Add("Especialização ativa:", state.specName or "?", state.specID or "?")
-    Add("Mapa:", state.position and state.position.mapID or "?")
-    Add("Modo:", J.db.settings.mode, "consentimento", J.db.settings.autoConsent,
-        "recompensa automática", J.db.settings.autoRewards)
+    Add("Level:", state.level or "?", "/", state.maxLevel or "?", "Group:", state.groupSize or 1)
+    Add("Active specialization:", state.specName or "?", state.specID or "?")
+    Add("Map:", state.position and state.position.mapID or "?")
+    Add("Mode:", J.db.settings.mode, "consent", J.db.settings.autoConsent,
+        "automatic rewards", J.db.settings.autoRewards)
     Add("")
-    Add("CAMPANHAS —", #(r.campaigns or {}), "retornadas")
+    Add("CAMPAIGNS —", #(r.campaigns or {}), "returned")
     for _, c in ipairs(r.campaigns or {}) do
-        Add("Campanha", c.id, c.name, "estado", c.state or "?", "capítulo", c.chapterID or "?", c.chapter or "")
-        Add("  recompensa do capítulo:", c.rewardQuestID or "?", "(não assumida como próxima missão)")
-        if c.reason then Add("  impedimento:", c.reason, "missão", c.blockedQuestID or "?") end
+        Add("Campaign", c.id, c.name, "state", c.state or "?", "chapter", c.chapterID or "?", c.chapter or "")
+        Add("  chapter reward:", c.rewardQuestID or "?", "(not assumed to be the next quest)")
+        if c.reason then Add("  blocker:", c.reason, "quest", c.blockedQuestID or "?") end
     end
-    if #(r.campaigns or {}) == 0 then Add("Nenhuma campanha retornada neste contexto; isso não prova que a API esteja bloqueada.") end
+    if #(r.campaigns or {}) == 0 then Add("No campaigns returned in this context; this does not prove the API is blocked.") end
     Add("")
     local s = r.sources or {}
-    Add("MISSÕES — log", s.log or 0, "mapa", s.map or 0, "linhas", s.lines or 0, "tarefas", s.tasks or 0)
+    Add("QUESTS — log", s.log or 0, "map", s.map or 0, "lines", s.lines or 0, "tasks", s.tasks or 0)
     for _, q in ipairs(r.quests or {}) do
-        Add("Missão", q.questID, q.title, "campanha", q.campaign, "aceita", q.accepted, "ação", q.action)
-        if q.mapID then Add("  mapa", q.mapID, "x", string.format("%.5f", q.x), "y", string.format("%.5f", q.y), J.DistanceText(q.distance))
-        else Add("  próxima coordenada não exposta neste contexto") end
+        Add("Quest", q.questID, q.title, "campaign", q.campaign, "accepted", q.accepted, "action", q.action)
+        if q.mapID then Add("  map", q.mapID, "x", string.format("%.5f", q.x), "y", string.format("%.5f", q.y), J.DistanceText(q.distance))
+        else Add("  next coordinate is not exposed in this context") end
     end
     Add("")
-    Add("LOOT — consulta manual; filtro da especialização ativa")
+    Add("LOOT — manual query; active specialization filter")
     if J.loot then
         local loot = J.loot
-        Add("Masmorra:", loot.dungeon.id, loot.dungeon.name, "tier", loot.dungeon.tier, "dificuldade", loot.difficulty)
-        Add("Entradas:", loot.count or 0, "dados pendentes:", loot.pending or 0, "tentativa", loot.attempt or 1)
+        Add("Dungeon:", loot.dungeon.id, loot.dungeon.name, "tier", loot.dungeon.tier, "difficulty", loot.difficulty)
+        Add("Entries:", loot.count or 0, "pending data:", loot.pending or 0, "attempt", loot.attempt or 1)
         if loot.message then Add(loot.message) end
         for _, item in ipairs(loot.items) do
             Add("Item", item.id, item.name or "(carregando)", "slot", item.slot or "?", "ilvl", item.ilvl or "?", "boss", item.encounterID or "?")
             if item.link then Add("  ", item.link) end
         end
-    else Add("Não consultado. Clique em Executar leituras fora de combate, com o Journal fechado.") end
+    else Add("Not queried. Click Run readings out of combat with the Journal closed.") end
     Add("")
-    Add("ERROS / RESTRIÇÕES")
+    Add("ERRORS / RESTRICTIONS")
     local keys = {}; for key in pairs(J.errors) do keys[#keys + 1] = key end
     table.sort(keys)
-    if #keys == 0 then Add("Nenhum erro capturado; ausência de erro não equivale a validação no cliente.") end
+    if #keys == 0 then Add("No errors captured; absence of an error does not equal in-client validation.") end
     for _, key in ipairs(keys) do Add(key .. ":", J.errors[key]) end
     Add("")
-    Add("Pendentes: equipamento por slot, custos reais de upgrade/crests, lockouts, Vault, XP e dificuldades. Automações requerem confirmação no cliente.")
+    Add("Pending: slot-by-slot gear, actual upgrade/crest costs, lockouts, Great Vault, XP, and difficulty data. Automation requires in-client confirmation.")
     local text = table.concat(lines, "\n")
     J.db.lastReport = text
     return text

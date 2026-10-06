@@ -89,7 +89,7 @@ function J.ReadQuests(state)
         local q = byID[id] or {key = "quest:" .. id, questID = id, kind = "quest"}
         local title = J.String(J.Field(info, "title")) or J.String(J.Field(line, "questName"))
             or J.String(API("C_QuestLog", "GetTitleForQuestID", id))
-        q.title = title or "Missão #" .. id
+        q.title = title or "Quest #" .. id
         q.accepted = info ~= nil
         q.worldQuest = C_QuestLog and C_QuestLog.IsWorldQuest
             and J.Bool(API("C_QuestLog", "IsWorldQuest", id)) or false
@@ -97,7 +97,7 @@ function J.ReadQuests(state)
         q.campaignID = J.Number(API("C_CampaignInfo", "GetCampaignID", id))
         if q.campaignID and q.campaignID > 0 then campaigns[q.campaignID] = true end
         q.turnIn = q.accepted and J.Bool(API("C_QuestLog", "ReadyForTurnIn", id))
-        q.action = q.turnIn and "Entregar" or (q.accepted and "Cumprir objetivo" or "Aceitar")
+        q.action = q.turnIn and "Turn in" or (q.accepted and "Complete objective" or "Accept")
         local tag = API("C_QuestLog", "GetQuestTagInfo", id)
         local tagID = J.Number(J.Field(tag, "tagID"))
         q.instanced = tagID == 81 or tagID == 62 or tagID == 88
@@ -192,7 +192,7 @@ function J.ReadCampaigns(logCampaigns)
         local chapter = chapterID and API("C_CampaignInfo", "GetCampaignChapterInfo", chapterID)
         local reason = API("C_CampaignInfo", "GetFailureReason", id)
         campaigns[#campaigns + 1] = {
-            id = id, name = J.String(J.Field(info, "name")) or "Campanha #" .. id,
+            id = id, name = J.String(J.Field(info, "name")) or "Campaign #" .. id,
             state = J.Number(API("C_CampaignInfo", "GetState", id)),
             chapterID = chapterID, chapter = J.String(J.Field(chapter, "name")),
             rewardQuestID = J.Number(J.Field(chapter, "rewardQuestID")),
@@ -208,7 +208,7 @@ function J.RefreshReadings()
     local state = J.ReadCharacter()
     if not state.position or not state.position.mapID then
         J.readings = {state = state, quests = {}, campaigns = {}, sources = {}, captured = J.Timestamp()}
-        J.Error("map", "Localização indisponível agora. Aguardando o mapa do personagem.")
+        J.Error("map", "Location unavailable right now. Waiting for the character map.")
         J.Replan(true)
         return
     end

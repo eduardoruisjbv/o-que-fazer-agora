@@ -41,7 +41,7 @@ function J.OpenInstanceSuggestion()
     local q = J.plan and J.plan.instanced
     if not q then return end
     if InCombatLockdown and InCombatLockdown() then
-        J.Print("Abra o localizador de grupos após o combate.")
+        J.Print("Open Group Finder after combat.")
         return
     end
     if C_AddOns and C_AddOns.LoadAddOn then J.API("C_AddOns", "LoadAddOn", "Blizzard_GroupFinder") end
@@ -53,9 +53,9 @@ function J.OpenInstanceSuggestion()
         J.Call("LFGListUtil_FindQuestGroup", LFGListUtil_FindQuestGroup, q.questID, false)
     elseif PVEFrame_ShowFrame then
         J.Call("PVEFrame_ShowFrame", PVEFrame_ShowFrame, "GroupFinderFrame", LFGListPVEStub)
-        J.Print("Escolha o conteúdo no localizador de grupos: " .. q.title)
+        J.Print("Choose content in Group Finder: " .. q.title)
     else
-        J.Print("O localizador de grupos não está disponível neste contexto.")
+        J.Print("Group Finder is unavailable in this context.")
     end
 end
 
@@ -63,23 +63,23 @@ function J.UpdateUI()
     local ui = J.ui
     if not ui then return end
     local state, plan = J.readings.state or {}, J.plan or {}
-    ui.state:SetText(string.format("Nível %s/%s  ·  %s  ·  Grupo %d  ·  Mapa %s",
-        state.level or "?", state.maxLevel or "?", state.specName or "especialização não informada",
+    ui.state:SetText(string.format("Level %s/%s  ·  %s  ·  Group %d  ·  Map %s",
+        state.level or "?", state.maxLevel or "?", state.specName or "specialization unknown",
         state.groupSize or 1, state.position and state.position.mapID or "?"))
     local function Card(box, q, empty)
         box.title:SetText(q and q.title or empty)
         box.detail:SetText(q and ((q.waypointText and (q.waypointText .. "\n") or "") .. q.action .. " · " .. J.DistanceText(q.distance)
-            .. (q.mapID and string.format(" · %.1f, %.1f", q.x * 100, q.y * 100) or " · sem coordenadas")) or "")
+            .. (q.mapID and string.format(" · %.1f, %.1f", q.x * 100, q.y * 100) or " · no coordinates")) or "")
     end
-    Card(ui.main, plan.primary, "Nenhum objetivo encontrado neste contexto")
-    Card(ui.side, plan.secondary, "Sem secundária no trajeto")
+    Card(ui.main, plan.primary, "No objective found in this context")
+    Card(ui.side, plan.secondary, "No secondary objective on the route")
     ui.instance:SetShown(plan.instanced ~= nil)
-    ui.instance:SetText(plan.instanced and ("Instância · " .. plan.instanced.title .. " — Encontrar grupo") or "")
-    local reason = plan.reason or "Aguardando os dados do personagem."
+    ui.instance:SetText(plan.instanced and ("Instance · " .. plan.instanced.title .. " — Find group") or "")
+    local reason = plan.reason or "Waiting for character data."
     if state.atMax then
-        reason = "Prévia de mundo aberto. A escolha PvE por equipamento pertence à etapa 2."
+        reason = "Open-world preview. Gear-based PvE selection is planned for stage 2."
     elseif plan.heuristic then
-        reason = "Campanha não confirmada: usando a heurística de missões próximas."
+        reason = "Campaign not confirmed: using the nearby-quest heuristic."
     end
     ui.reason:SetText(reason)
     ui.follow:SetEnabled(plan.primary ~= nil)
@@ -94,13 +94,13 @@ function J.UpdateModeUI()
     local automatic = J.AutoEnabled()
     ui.semiMode:SetText(automatic and "Semi-auto" or "Semi-auto (ativo)")
     ui.autoMode:SetText(automatic and "Auto (ativo)" or "Auto")
-    ui.modeQuick:SetText(automatic and "Modo: Auto" or "Modo: Semi-auto")
+    ui.modeQuick:SetText(automatic and "Mode: Auto" or "Mode: Semi-auto")
     ui.modeHelp:SetText(automatic
-        and "Rastreia as sugestões e usa o pin e o indicador da Blizzard automaticamente. Preserva pins manuais; aceitar e entregar missões fica sempre com você."
-        or "Escolhe objetivos e orienta automaticamente pela bússola, preservando seu rastreamento e sua seta. Missões ficam sempre com você.")
-    local detail = automatic and "Auto ativo · marcações manuais preservadas." or "Semi-auto · orientação automática pela bússola."
+        and "Tracks suggestions and automatically uses Blizzard’s waypoint and indicator. Preserves manual pins; accepting and turning in quests is always up to you."
+        or "Selects objectives and provides compass guidance while preserving your tracker and arrow. Quest interactions are always up to you.")
+    local detail = automatic and "Auto active · manual marks preserved." or "Semi-auto · automatic compass guidance."
     ui.hint:SetText(detail .. (J.autoStatus and ("\n" .. J.autoStatus) or "")
-        .. "\nShift + arrastar move a bússola. Outra sugestão ignora a atividade por 45 minutos.")
+        .. "\nShift-drag moves the compass. Another suggestion skips this activity for 45 minutes.")
 end
 
 function J.UpdateReadingsUI()
@@ -110,40 +110,40 @@ function J.UpdateReadingsUI()
     local coordinates = 0
     for _, q in ipairs(r.quests or {}) do if q.mapID then coordinates = coordinates + 1 end end
     local s = r.sources or {}
-    ui.summary:SetText(string.format("Campanhas: %d  ·  Missões: %d  ·  Com coordenadas: %d\nFontes: log %d / mapa %d / linhas %d / tarefas %d",
+    ui.summary:SetText(string.format("Campaigns: %d  ·  Quests: %d  ·  With coordinates: %d\nSources: log %d / map %d / lines %d / tasks %d",
         campaignCount, #(r.quests or {}), coordinates, s.log or 0, s.map or 0, s.lines or 0, s.tasks or 0))
     local dungeon = J.dungeons and J.dungeons[J.dungeonIndex or 1]
-    local labels = {[1] = "Normal", [2] = "Heroica", [23] = "Mítica"}
-    ui.dungeon:SetText(dungeon and dungeon.name or "Execute as leituras para descobrir as masmorras.")
-    ui.difficulty:SetText("Dificuldade: " .. (labels[J.journalDifficulty or 1] or "?"))
+    local labels = {[1] = "Normal", [2] = "Heroic", [23] = "Mythic"}
+    ui.dungeon:SetText(dungeon and dungeon.name or "Run readings to discover dungeons.")
+    ui.difficulty:SetText("Difficulty: " .. (labels[J.journalDifficulty or 1] or "?"))
     local lines = {}
     for _, c in ipairs(r.campaigns or {}) do
-        lines[#lines + 1] = string.format("Campanha #%d: %s\n   %s", c.id, c.name, c.chapter or "Sem capítulo retornado")
+        lines[#lines + 1] = string.format("Campaign #%d: %s\n   %s", c.id, c.name, c.chapter or "No chapter returned")
     end
-    if #lines == 0 then lines[#lines + 1] = "Nenhuma campanha retornada neste contexto." end
+    if #lines == 0 then lines[#lines + 1] = "No campaigns returned in this context." end
     lines[#lines + 1] = ""
-    lines[#lines + 1] = "MISSÕES E PRÓXIMAS AÇÕES"
+    lines[#lines + 1] = "QUESTS AND NEXT ACTIONS"
     for _, q in ipairs(r.quests or {}) do
-        local coords = q.mapID and string.format("mapa %d · %.1f, %.1f", q.mapID, q.x * 100, q.y * 100) or "sem coordenadas"
-        lines[#lines + 1] = string.format("%s%s — %s\n   %s · %s", q.campaign and "[Campanha] " or "", q.title, q.action, coords, J.DistanceText(q.distance))
+        local coords = q.mapID and string.format("map %d · %.1f, %.1f", q.mapID, q.x * 100, q.y * 100) or "no coordinates"
+        lines[#lines + 1] = string.format("%s%s — %s\n   %s · %s", q.campaign and "[Campaign] " or "", q.title, q.action, coords, J.DistanceText(q.distance))
     end
     lines[#lines + 1] = ""
-    lines[#lines + 1] = "LOOT DA MASMORRA"
+    lines[#lines + 1] = "DUNGEON LOOT"
     if J.loot then
         local loot = J.loot
         lines[#lines + 1] = loot.dungeon.name .. " · " .. (labels[loot.difficulty] or tostring(loot.difficulty))
         if loot.message then lines[#lines + 1] = loot.message end
-        lines[#lines + 1] = string.format("Itens: %d · dados pendentes: %d · especialização: %s",
-            #(loot.items or {}), loot.pending or 0, loot.specName or "não informada")
+        lines[#lines + 1] = string.format("Items: %d · pending data: %d · specialization: %s",
+            #(loot.items or {}), loot.pending or 0, loot.specName or "unknown")
         for _, item in ipairs(loot.items or {}) do
-            lines[#lines + 1] = string.format("%s · %s · ilvl %s", item.name or ("Item #" .. item.id), item.slot or "slot pendente", item.ilvl or "pendente")
+            lines[#lines + 1] = string.format("%s · %s · ilvl %s", item.name or ("Item #" .. item.id), item.slot or "slot pending", item.ilvl or "pending")
         end
-    else lines[#lines + 1] = "Ainda não consultado. Execute as leituras fora de combate." end
+    else lines[#lines + 1] = "Not queried yet. Run readings out of combat." end
     local keys = {}; for key in pairs(J.errors) do keys[#keys + 1] = key end
     if #keys > 0 then
         table.sort(keys)
         lines[#lines + 1] = ""
-        lines[#lines + 1] = "LEITURAS INDISPONÍVEIS"
+        lines[#lines + 1] = "UNAVAILABLE READINGS"
         for _, key in ipairs(keys) do lines[#lines + 1] = key .. ": " .. J.errors[key] end
     end
     ui.details:SetText(table.concat(lines, "\n"))
@@ -166,8 +166,8 @@ function J.ShowReport()
         frame:SetFrameStrata("DIALOG")
         frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 16})
         frame:SetBackdropColor(0.025, 0.03, 0.04, 1)
-        Text(frame, "GameFontNormalLarge", "TOPLEFT", 18, -18, 570, "Relatório de viabilidade · Just do it")
-        Text(frame, "GameFontHighlightSmall", "TOPLEFT", 18, -47, 605, "Ctrl+A e Ctrl+C para copiar. O relatório não inclui nome nem GUID do personagem.")
+        Text(frame, "GameFontNormalLarge", "TOPLEFT", 18, -18, 570, "Feasibility report · Just do it")
+        Text(frame, "GameFontHighlightSmall", "TOPLEFT", 18, -47, 605, "Press Ctrl+A and Ctrl+C to copy. The report does not include the character name or GUID.")
         local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
         close:SetPoint("TOPRIGHT", 0, 0)
         local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
@@ -246,14 +246,14 @@ function J.CreateUI()
     frame:SetBackdropBorderColor(0.25, 0.35, 0.37)
     local title = Text(frame, "GameFontNormalHuge", "TOPLEFT", 20, -20, 440, "Just do it")
     title:SetTextColor(unpack(J.primaryColor))
-    Text(frame, "GameFontHighlightSmall", "TOPLEFT", 21, -55, 605, "Uma direção para sua próxima atividade.")
+    Text(frame, "GameFontHighlightSmall", "TOPLEFT", 21, -55, 605, "One direction for your next activity.")
     frame.state = Text(frame, "GameFontHighlightSmall", "TOPLEFT", 21, -80, 615)
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -3, -3)
-    frame.modeQuick = Button(frame, "Modo: Semi-auto", 440, -25, 175, function(owner)
+    frame.modeQuick = Button(frame, "Mode: Semi-auto", 440, -25, 175, function(owner)
         if MenuUtil and MenuUtil.CreateContextMenu then
             MenuUtil.CreateContextMenu(owner, function(_, root)
-                root:CreateTitle("Modo de orientação")
+                root:CreateTitle("Guidance mode")
                 root:CreateRadio("Semi-auto", function() return not J.AutoEnabled() end,
                     function() J.RequestMode("semi") end)
                 root:CreateRadio("Auto", function() return J.AutoEnabled() end,
@@ -261,9 +261,9 @@ function J.CreateUI()
             end)
         else J.ShowPage("settings") end
     end)
-    Button(frame, "Agora", 20, -110, 100, function() J.ShowPage("now") end)
-    Button(frame, "Leituras", 128, -110, 100, function() J.ShowPage("readings") end)
-    Button(frame, "Configuração", 236, -110, 125, function() J.ShowPage("settings") end)
+    Button(frame, "Now", 20, -110, 100, function() J.ShowPage("now") end)
+    Button(frame, "Readings", 128, -110, 100, function() J.ShowPage("readings") end)
+    Button(frame, "Settings", 236, -110, 125, function() J.ShowPage("settings") end)
     frame.pages = {}
     for _, name in ipairs({"now", "readings", "settings"}) do
         local page = CreateFrame("Frame", nil, frame)
@@ -273,18 +273,18 @@ function J.CreateUI()
         page:Hide()
     end
     local now = frame.pages.now
-    frame.main = CandidateCard(now, 20, 0, "P · PRINCIPAL", J.primaryColor)
-    frame.side = CandidateCard(now, 20, -130, "S · SECUNDÁRIA", J.secondaryColor)
+    frame.main = CandidateCard(now, 20, 0, "P · PRIMARY", J.primaryColor)
+    frame.side = CandidateCard(now, 20, -130, "S · SECONDARY", J.secondaryColor)
     frame.instance = Button(now, "", 20, -258, 620, J.OpenInstanceSuggestion)
     frame.reason = Text(now, "GameFontHighlightSmall", "TOPLEFT", 24, -291, 610)
-    frame.follow = Button(now, "Seguir sugestão", 20, -324, 150, J.FollowSuggestion)
-    frame.skip = Button(now, "Outra sugestão", 180, -324, 150, function() J.Ignore(J.plan and J.plan.primary) end)
-    Button(now, "Atualizar", 340, -324, 110, J.RefreshReadings)
+    frame.follow = Button(now, "Follow suggestion", 20, -324, 150, J.FollowSuggestion)
+    frame.skip = Button(now, "Another suggestion", 180, -324, 150, function() J.Ignore(J.plan and J.plan.primary) end)
+    Button(now, "Refresh", 340, -324, 110, J.RefreshReadings)
     frame.hint = Text(now, "GameFontDisableSmall", "TOPLEFT", 24, -361, 605)
     local readings = frame.pages.readings
     frame.summary = Text(readings, "GameFontHighlight", "TOPLEFT", 24, -2, 610)
-    Button(readings, "Executar leituras", 20, -50, 150, J.Probe)
-    Button(readings, "Copiar relatório", 180, -50, 150, J.ShowReport)
+    Button(readings, "Run readings", 20, -50, 150, J.Probe)
+    Button(readings, "Copy report", 180, -50, 150, J.ShowReport)
     frame.dungeon = Text(readings, "GameFontNormal", "TOPLEFT", 24, -94, 430)
     Button(readings, "<", 515, -86, 40, function()
         if J.dungeons and #J.dungeons > 0 then
@@ -301,7 +301,7 @@ function J.CreateUI()
     frame.difficulty = Text(readings, "GameFontHighlightSmall", "TOPLEFT", 24, -127, 250)
     for index, difficulty in ipairs({1, 2, 23}) do
         local selected = difficulty
-        Button(readings, ({"Normal", "Heroica", "Mítica"})[index], 300 + (index - 1) * 102, -118, 96, function()
+        Button(readings, ({"Normal", "Heroic", "Mythic"})[index], 300 + (index - 1) * 102, -118, 96, function()
             J.journalDifficulty = selected
             local dungeon = J.dungeons and J.dungeons[J.dungeonIndex or 1]
             if dungeon then J.ReadLoot(dungeon, selected) else J.UpdateReadingsUI() end
@@ -322,20 +322,20 @@ function J.CreateUI()
     local settings = CreateFrame("Frame", nil, configScroll)
     settings:SetSize(620, 570)
     configScroll:SetScrollChild(settings)
-    Text(settings, "GameFontNormalLarge", "TOPLEFT", 24, -3, 580, "Modo de orientação")
+    Text(settings, "GameFontNormalLarge", "TOPLEFT", 24, -3, 580, "Guidance mode")
     frame.semiMode = Button(settings, "Semi-auto", 24, -34, 175, function() J.RequestMode("semi") end)
     frame.autoMode = Button(settings, "Auto", 210, -34, 175, function() J.RequestMode("auto") end)
     frame.modeHelp = Text(settings, "GameFontHighlightSmall", "TOPLEFT", 24, -75, 560)
-    Checkbox(settings, "Mostrar bússola", "compass", -145, J.LayoutCompass)
-    Checkbox(settings, "Mostrar botão no minimapa", "minimap", -175, function()
+    Checkbox(settings, "Show compass", "compass", -145, J.LayoutCompass)
+    Checkbox(settings, "Show minimap button", "minimap", -175, function()
         if J.minimap then J.minimap:SetShown(J.db.settings.minimap) end
     end)
-    Checkbox(settings, "Mostrar indicadores de zona da Blizzard (topo)", "showZoneIndicators", -205,
+    Checkbox(settings, "Show Blizzard zone indicators (top)", "showZoneIndicators", -205,
         J.UpdateBlizzardWidgetLayout)
-    Slider(settings, "Largura do corredor (m)", "corridor", 25, 600, 25, -268)
-    Slider(settings, "Raio muito próximo (m)", "closeRadius", 25, 500, 25, -330)
-    Slider(settings, "Distância relativa à campanha", "closeRatio", 0.1, 0.8, 0.05, -392, "%.2f")
-    Slider(settings, "Estabilidade antes de trocar (s)", "switchSeconds", 1, 15, 1, -454)
+    Slider(settings, "Corridor width (m)", "corridor", 25, 600, 25, -268)
+    Slider(settings, "Very close radius (m)", "closeRadius", 25, 500, 25, -330)
+    Slider(settings, "Distance relative to campaign", "closeRatio", 0.1, 0.8, 0.05, -392, "%.2f")
+    Slider(settings, "Stability before switching (s)", "switchSeconds", 1, 15, 1, -454)
     J.ui = frame
     J.UpdateModeUI()
     frame.pages.now:Show()
@@ -396,8 +396,8 @@ function J.CreateMinimapButton()
     button:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
         GameTooltip:AddLine("Just do it", unpack(J.primaryColor))
-        GameTooltip:AddLine("Clique: painel · Botão direito: configuração", 1, 1, 1)
-        GameTooltip:AddLine("Arraste para mover no minimapa.", 0.8, 0.8, 0.8)
+        GameTooltip:AddLine("Click: panel · Right-click: settings", 1, 1, 1)
+        GameTooltip:AddLine("Drag to move around the minimap.", 0.8, 0.8, 0.8)
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function() GameTooltip:Hide() end)

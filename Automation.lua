@@ -51,11 +51,11 @@ function J.SetMode(mode)
 end
 
 StaticPopupDialogs.JUSTDOIT_REWARDS = {
-    text = "Permitir a escolha automática de recompensa no modo Auto?\n\n"
-        .. "O Just do it escolherá o item de maior ilvl compatível com a especialização ativa, "
-        .. "mesmo que não melhore seu equipamento.\n\n"
-        .. "Empates, dados incompletos ou escolhas de moeda permanecem manuais.",
-    button1 = "Permitir", button2 = "Cancelar", timeout = 0,
+    text = "Allow automatic reward selection in Auto mode?\n\n"
+        .. "Just do it will choose the highest item-level item compatible with your active specialization, "
+        .. "even if it does not improve your gear.\n\n"
+        .. "Ties, incomplete data, and currency choices remain manual.",
+    button1 = "Allow", button2 = "Cancel", timeout = 0,
     whileDead = true, hideOnEscape = true, preferredIndex = 3,
     OnAccept = function(_, settings)
         if not J.AutoEnabled() or J.db.settings ~= settings then return end
@@ -134,7 +134,7 @@ function J.SyncAutomation()
             if J.Bool(added) then J.db.ownedWatches[id] = kind else noRoom = true end
         end
     end
-    J.autoStatus = noRoom and "Rastreamento indisponível ou sem espaço; orientação pela bússola." or nil
+    J.autoStatus = noRoom and "Tracking unavailable or full; compass guidance remains active." or nil
     if not J.directionGranted then return end
     local q = J.plan and J.plan.primary
     if not q or (q.instanced and not q.turnIn) or J.Bool(J.Call("IsInInstance", IsInInstance)) then

@@ -51,8 +51,8 @@ function J.ChoosePlan(quests, state, settings)
         end
     else main, side = secondary[1], secondary[2] end
     return {primary = main, secondary = side, campaign = campaign, instanced = instanced[1], heuristic = not campaign,
-        preview = state.atMax, reason = campaign and "Campanha e objetivos no trajeto"
-            or "Missões próximas · campanha não confirmada"}
+        preview = state.atMax, reason = campaign and "Campaign and objectives along the route"
+            or "Nearby quests · campaign not confirmed"}
 end
 
 local function Same(a, b)

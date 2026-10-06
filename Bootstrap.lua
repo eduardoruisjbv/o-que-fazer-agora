@@ -29,7 +29,7 @@ end
 function J.Initialize()
     if J.initialized then return end
     if type(J.InitAutomation) ~= "function" then
-        J.Print("Reinicie o WoW para carregar o novo módulo do modo Auto; a lista de arquivos não foi atualizada neste /reload.")
+        J.Print("Restart WoW to load the new Auto-mode module; the file list cannot be updated by /reload.")
         return
     end
     J.InitDB()
