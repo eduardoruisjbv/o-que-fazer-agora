@@ -1,6 +1,6 @@
 ## Interface: 120100
 ## Title: Just do it
-## Notes: Uma direção para sua próxima atividade. Protótipo de viabilidade para WoW Retail.
+## Notes: Orientação de campanha e missões com bússola e navegação nativa da Blizzard.
 ## Author: Eduardo Rui
 ## Version: 0.2.4
 ## IconTexture: 4635196

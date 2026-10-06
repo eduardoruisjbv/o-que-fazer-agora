@@ -4,7 +4,7 @@ Addon individual de WoW Retail 12.x para sugerir a próxima atividade do persona
 
 ## Estado da entrega
 
-**0.2.4 — protótipo com modos Semi-auto e Auto.** Implementa as três leituras combinadas, orientação por missões e automações com consentimento. A recomendação completa PvE por equipamento continua pendente.
+**0.2.4 — primeira Release, com modos Semi-auto e Auto.** Implementa as três leituras combinadas, orientação por missões e automações com consentimento. A recomendação completa PvE por equipamento continua pendente.
 
 - Painel aberto pelo minimapa ou `/jdi`, sem popup de login. Seletor **Modo: Semi-auto / Auto** no topo e controles na aba Configuração. Botão circular compacto com ícone nativo de bússola (FileDataID 4635196).
 - Leitura de campanhas disponíveis e presentes no log, capítulo atual e impedimentos.
@@ -70,3 +70,7 @@ As verificações locais de consentimento, propriedade das marcações e escolha
 Na 0.2.3, etapas instanciadas disponíveis na leitura aparecem como uma linha discreta abaixo da bússola, com prioridade para campanha. Não recebem direção externa; entregas no mundo aberto voltam à seleção normal. A sugestão completa de masmorra por equipamento permanece pendente.
 
 Na 0.2.4, instruções de passagem retornadas pela Blizzard aparecem na bússola e no painel. Para esses trechos, o Auto usa um waypoint, preferindo a etapa local da rota quando o jogo a expõe; missões aceitas sem passagem continuam com o rastreamento nativo da missão. A indicação instanciada do painel é clicável e abre a busca correspondente quando disponível, ou o localizador de grupos como alternativa.
+
+## Licença
+
+MIT. Veja [LICENSE](LICENSE).
