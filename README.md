@@ -4,7 +4,7 @@ A character-focused World of Warcraft Retail 12.x addon that suggests the next a
 
 ## Delivery status
 
-**0.2.4 — first release, with Auto and Semi-auto modes.** Combines three game-data reads with quest guidance. Auto starts enabled by default; quest interactions remain manual in both modes. Full PvE equipment recommendations are still pending.
+**0.2.10 — PvP context and item metadata cache update.** Combines three game-data reads with quest guidance. Auto starts enabled by default; quest interactions remain manual in both modes. Full PvE equipment recommendations are still pending.
 
 - Open the panel from the minimap or with `/jdi`; there is no login popup. The **Mode: Semi-auto / Auto** selector is at the top, with controls on the Settings tab. The compact circular button uses the native compass icon (FileDataID 4635196).
 - Reads available campaigns, campaigns in the quest log, the current chapter, and blockers.
@@ -15,6 +15,7 @@ A character-focused World of Warcraft Retail 12.x addon that suggests the next a
 - Adds P/S pins to the map with tooltip labels. Semi-auto preserves the tracker and arrow; Auto adds suggestions to the tracker while preserving manual pins. In Auto, available quests receive a pin and accepted quests use their native quest tracking; manual pins take priority. **Follow Suggestion** lets you resume control.
 - Includes proximity/corridor rules, stable suggestion switching, and a 45-minute exclusion for the exact activity.
 - Provides a copyable report, also saved to `JustDoItDB.lastReport` when you leave the game.
+- Shows PvP queue, invitation, and match status in the panel, updated from client queue events.
 
 The addon works for one player and does not communicate with other players. Encounter Journal queries are manual, out of combat, and require its native window to be closed. Each read restores the Journal's filters and previous visual selection. Secret 12.x data is neither compared nor serialized.
 

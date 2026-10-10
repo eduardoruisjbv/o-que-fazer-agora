@@ -44,6 +44,7 @@ function J.Initialize()
     J.On("journal", J.UpdateUI)
     J.On("mode", J.UpdateUI)
     J.initialized = true
+    J.UpdatePvPUI()
     J.ScheduleReadings()
     C_Timer.After(2, J.ScheduleReadings)
     -- Quest reads are event-driven/debounced. This ticker recomputes distances
@@ -78,6 +79,9 @@ events:SetScript("OnEvent", function(_, event, ...)
         if loaded == "Blizzard_WorldMap" then J.SetupMapPins() end
     elseif event == "PLAYER_LOGIN" then J.Initialize()
     elseif not J.initialized then return
+    elseif event == "UPDATE_BATTLEFIELD_STATUS" or event == "PVP_MATCH_ACTIVE"
+        or event == "PVP_MATCH_COMPLETE" or event == "PVP_MATCH_INACTIVE" then
+        J.UpdatePvPUI()
     elseif event == "PLAYER_ENTERING_WORLD" then
         local isInitialLogin, isReloadingUI = ...
         -- A new login starts a session; /reload and zoning retain its count.
@@ -120,6 +124,7 @@ for _, event in ipairs({"ADDON_LOADED", "PLAYER_LOGIN", "PLAYER_LOGOUT", "QUEST_
     "QUEST_ACCEPTED", "QUEST_REMOVED", "QUEST_TURNED_IN", "QUEST_POI_UPDATE", "QUEST_DATA_LOAD_RESULT", "QUESTLINE_UPDATE", "SUPER_TRACKING_PATH_UPDATED",
     "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "PLAYER_ENTERING_WORLD", "PLAYER_LEVEL_UP",
     "PLAYER_SPECIALIZATION_CHANGED", "GROUP_ROSTER_UPDATE", "PLAYER_REGEN_ENABLED",
+    "UPDATE_BATTLEFIELD_STATUS", "PVP_MATCH_ACTIVE", "PVP_MATCH_COMPLETE", "PVP_MATCH_INACTIVE",
     "GOSSIP_SHOW", "GOSSIP_CLOSED", "QUEST_GREETING", "QUEST_DETAIL", "QUEST_PROGRESS", "QUEST_COMPLETE", "QUEST_FINISHED"}) do
     J.Call("RegisterEvent:" .. event, events.RegisterEvent, events, event)
 end

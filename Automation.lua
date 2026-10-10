@@ -35,16 +35,28 @@ function J.SetMode(mode)
     if mode ~= "auto" and mode ~= "semi" then return end
     J.db.settings.mode = mode
     if mode == "auto" then
+        -- Returning to Auto before combat ends keeps the existing owned pin.
+        J.directionCleanupPending = nil
         -- Auto itself authorizes navigation. Keep an existing manual pin intact.
         J.directionGranted = J.nativeKey ~= nil or not J.Bool(J.API("C_Map", "HasUserWaypoint"))
     end
     if mode == "semi" then
         -- Clear only a point still controlled by us. A manual pin/quest change
         -- relinquishes this permission through the secure hooks below.
-        if J.directionGranted and not InCombat() then
-            Mutate(ClearOwnedDirection)
+        if J.directionGranted then
+            if InCombat() then
+                -- Navigation APIs cannot safely be changed during combat. Keep
+                -- ownership until PLAYER_REGEN_ENABLED can clear our direction.
+                J.directionCleanupPending = true
+            else
+                Mutate(ClearOwnedDirection)
+                J.directionCleanupPending = nil
+            end
         end
-        J.directionGranted, J.nativeKey, J.rewardPending = nil, nil, nil
+        if not J.directionCleanupPending then
+            J.nativeKey, J.nativeQuestID = nil, nil
+        end
+        J.directionGranted, J.rewardPending = nil, nil
     end
     J.SyncAutomation()
     J.Emit("mode")
@@ -108,6 +120,10 @@ end
 
 function J.SyncAutomation()
     if not J.db or InCombat() then return end
+    if J.directionCleanupPending then
+        Mutate(ClearOwnedDirection)
+        J.directionCleanupPending = nil
+    end
     local desired = {}
     if J.AutoEnabled() then
         local plan = J.plan or {}
@@ -263,8 +279,8 @@ function J.RewardChoice(count, specID)
         if lootType ~= 0 then return nil end
         local link = J.String(J.Call("GetQuestItemLink", GetQuestItemLink, "choice", index))
         if not link then return nil, true end
-        local ilvl = J.Number(J.API("C_Item", "GetDetailedItemLevelInfo", link))
-        local specs = J.Table(J.API("C_Item", "GetItemSpecInfo", link))
+        local ilvl = J.Number(J.CachedItemAPI("GetDetailedItemLevelInfo", link))
+        local specs = J.Table(J.CachedItemAPI("GetItemSpecInfo", link))
         if not ilvl or not specs then return nil, true end
         local compatible = false
         for _, id in ipairs(specs) do if J.Number(id) == specID then compatible = true; break end end

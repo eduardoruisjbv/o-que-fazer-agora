@@ -84,8 +84,39 @@ function J.UpdateUI()
     ui.reason:SetText(reason)
     ui.follow:SetEnabled(plan.primary ~= nil)
     ui.skip:SetEnabled(plan.primary ~= nil)
+    J.UpdatePvPUI()
     J.UpdateModeUI()
     if ui.pages.readings:IsShown() then J.UpdateReadingsUI() end
+end
+
+function J.UpdatePvPUI()
+    local panel = J.ui and J.ui.pvp
+    if not panel then return end
+
+    local maxQueues = J.Number(J.Call("GetMaxBattlefieldID", GetMaxBattlefieldID)) or 0
+    local queue
+    for index = 1, math.min(maxQueues, 20) do
+        local status, mapName = J.Call("GetBattlefieldStatus", GetBattlefieldStatus, index)
+        status = J.String(status)
+        if status == "queued" or status == "confirm" or status == "active" then
+            queue = {status = status, mapName = J.String(mapName)}
+            break
+        end
+    end
+
+    if not queue then
+        panel:Hide()
+        return
+    end
+
+    local labels = {
+        queued = "Na fila",
+        confirm = "Convite disponível · entre na partida",
+        active = "Em partida",
+    }
+    local detail = queue.mapName and (queue.mapName .. " · " .. labels[queue.status]) or labels[queue.status]
+    panel.status:SetText(detail)
+    panel:Show()
 end
 
 function J.UpdateModeUI()
@@ -281,6 +312,12 @@ function J.CreateUI()
     frame.skip = Button(now, "Another suggestion", 180, -324, 150, function() J.Ignore(J.plan and J.plan.primary) end)
     Button(now, "Refresh", 340, -324, 110, J.RefreshReadings)
     frame.hint = Text(now, "GameFontDisableSmall", "TOPLEFT", 24, -361, 605)
+    frame.pvp = Box(now, 20, -389, 620, 30)
+    frame.pvp:SetBackdropBorderColor(0.19, 0.24, 0.26)
+    frame.pvp.label = Text(frame.pvp, "GameFontNormalSmall", "LEFT", 12, 0, 38, "PvP")
+    frame.pvp.label:SetTextColor(unpack(J.primaryColor))
+    frame.pvp.status = Text(frame.pvp, "GameFontHighlightSmall", "LEFT", 48, 0, 550)
+    frame.pvp:Hide()
     local readings = frame.pages.readings
     frame.summary = Text(readings, "GameFontHighlight", "TOPLEFT", 24, -2, 610)
     Button(readings, "Run readings", 20, -50, 150, J.Probe)

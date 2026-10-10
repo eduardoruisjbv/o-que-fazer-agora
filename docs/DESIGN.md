@@ -69,9 +69,10 @@ Final name: **Just do it**. Target: WoW Retail 12.x / Midnight. Lua.
 - Do not replace a manual point until **Follow Suggestion** is selected. A new manual point returns arrow control to the player; choosing Follow again allows the addon to resume.
 - Semi-auto selects/updates objectives automatically but does not change the tracker or arrow.
 - Auto does not select, accept, or turn in quests during NPC conversations. The conversation and quest actions remain with the player.
-- Automatic reward selection requires separate permission, disabled by default. When enabled, choose the highest item level compatible with the active specialization, even if it is not an upgrade; ties remain manual.
+- Quest selection, acceptance, completion, and reward choices remain manual in both modes. Automatic quest reward selection is not active in this version.
 - **Another Suggestion** ignores only the exact activity/difficulty for 45 minutes.
 - Settings ship in the MVP with both modes. Future options appear when their features are implemented.
+- In both modes, quest selection, acceptance, completion, and rewards remain manual; NPC conversations do not trigger quest actions.
 
 ## Feasibility proof
 

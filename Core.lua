@@ -1,5 +1,5 @@
 local addonName, J = ...
-J.name, J.version = addonName, "0.2.9"
+J.name, J.version = addonName, "0.2.10"
 J.icon = 4635196 -- Native WoW Explorer Compass trinket icon (FileDataID).
 J.readings, J.errors, J.listeners = {}, {}, {}
 J.primaryColor = {0.64, 0.71, 0.74} -- Muted blue grey.
@@ -67,6 +67,15 @@ end
 function J.API(namespace, method, ...)
     local api = _G[namespace]
     return J.Call(namespace .. "." .. method, api and api[method], ...)
+end
+
+function J.CachedItemAPI(method, link)
+    local fn = C_Item and C_Item[method]
+    local cache = _G.MemoryItemCache
+    if not cache or type(cache.Read) ~= "function" then
+        return J.API("C_Item", method, link)
+    end
+    return cache.Read(fn, link, function() return J.API("C_Item", method, link) end)
 end
 
 function J.InitDB()

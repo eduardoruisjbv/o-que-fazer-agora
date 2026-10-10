@@ -32,9 +32,9 @@ LuaJIT compilation and geometry tests do not validate frames, real coordinates, 
 
 The [WoW-extracted listfile](https://github.com/wowdev/wow-listfile/blob/master/parts/interface.csv) identifies `4635196` as `INV_10_DungeonJewelry_Explorer_Trinket_1Compass_Color1`, `3528314` as `Interface/Masks/CircleMask.BLP`, and `136477` as the minimap button highlight. The icon was visually inspected before selection. These are native game files; no external image needs to be distributed.
 
-## Auto mode (0.2.0)
+## Quest actions
 
-NPC operations follow the functions used in [QuestFrame.lua](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_UIPanels_Game/Mainline/QuestFrame.lua) and [QuestInfo.lua](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_UIPanels_Game/Mainline/QuestInfo.lua): `AcceptQuest`, `CompleteQuest`, `GetQuestReward`, and choice counts/hyperlinks. Reward compatibility uses `C_Item.GetItemSpecInfo` for the active specialization; when data is incomplete, the player chooses. Currency choices and reward confirmation with a cost remain native.
+In both modes, selecting an NPC quest, accepting it, completing it, and choosing or collecting its rewards remain player actions. The addon automates only tracking and navigation described below. The native NPC interaction flow is implemented in Blizzard's [QuestFrame.lua](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_UIPanels_Game/Mainline/QuestFrame.lua) and [QuestInfo.lua](https://github.com/Gethe/wow-ui-source/blob/live/Interface/AddOns/Blizzard_UIPanels_Game/Mainline/QuestInfo.lua), which expose `AcceptQuest`, `CompleteQuest`, `GetQuestReward`, and reward choice metadata; this addon does not invoke those quest actions. Item metadata read for the Encounter Journal uses a session cache; pending data is never replaced with an invented estimate.
 
 `C_QuestLog.AddQuestWatch` / `AddWorldQuestWatch` and removal are tracked with persisted ownership of the marks. Safe hooks treat outside changes as player choices and suspend control of the arrow. This needs confirmation with the native tracker, installed tracker addons, manual changes, combat, and reload in the real client.
 

@@ -108,7 +108,7 @@ function J.ReadLoot(dungeon, difficulty, attempt, generation)
             local id = J.Number(J.Field(info, "itemID"))
             if id then
                 local link = J.String(J.Field(info, "link"))
-                local ilvl = link and J.Number(J.API("C_Item", "GetDetailedItemLevelInfo", link))
+                local ilvl = link and J.Number(J.CachedItemAPI("GetDetailedItemLevelInfo", link))
                 local item = {id = id, link = link, ilvl = ilvl,
                     name = J.String(J.Field(info, "name")),
                     slot = J.String(J.Field(info, "slot")),

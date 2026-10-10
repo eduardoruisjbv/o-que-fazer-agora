@@ -2,11 +2,12 @@
 ## Title: Just do it
 ## Notes: Campaign and quest guidance with a compass and native Blizzard navigation.
 ## Author: Eduardo Rui
-## Version: 0.2.9
+## Version: 0.2.10
 ## IconTexture: 4635196
 ## SavedVariablesPerCharacter: JustDoItDB
 
 Core.lua
+ItemCache.lua
 Readings.lua
 Journal.lua
 Planner.lua

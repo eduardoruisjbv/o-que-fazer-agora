@@ -1,3 +1,12 @@
+# Just do it 0.2.10 — PvP status and item metadata cache
+
+- Show the current PvP queue, ready prompt, or active match in the main panel.
+- Cache reusable item level and specialization metadata for the session.
+- Defer cleanup of addon-owned navigation until combat ends when switching to Semi-auto.
+- Keep quest acceptance, turn-in, and reward selection under player control in both modes.
+
+In-game confirmation is pending.
+
 # Just do it 0.2.9 — Optional zone indicators
 
 - Hide Blizzard's top-centre zone indicators by default, preserving their native/AzeriteUI position.
