@@ -184,6 +184,10 @@ end
 
 function J.ShowPage(name)
     if not J.ui then return end
+    if name == "settings" and J.optionsCategory and Settings and Settings.OpenToCategory then
+        Settings.OpenToCategory(J.optionsCategory:GetID())
+        return
+    end
     for key, page in pairs(J.ui.pages) do page:SetShown(key == name) end
     J.ui:Show()
     J.UpdateUI()
@@ -427,7 +431,7 @@ function J.CreateMinimapButton()
     end)
     button:SetScript("OnDragStop", function(self) self:SetScript("OnUpdate", nil) end)
     button:SetScript("OnClick", function(_, mouse)
-        if mouse == "RightButton" then J.ShowPage("settings")
+        if mouse == "RightButton" then J.OpenSettings()
         elseif J.ui:IsShown() then J.ui:Hide() else J.ShowPage("now") end
     end)
     button:SetScript("OnEnter", function(self)

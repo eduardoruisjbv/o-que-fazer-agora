@@ -33,6 +33,7 @@ function J.Initialize()
         return
     end
     J.InitDB()
+    if J.BuildOptions then J.BuildOptions() end
     J.db.sessionQuests = math.max(0, math.floor(J.Number(J.db.sessionQuests) or 0))
     J.InitAutomation()
     J.CreateUI()
@@ -135,7 +136,7 @@ SlashCmdList.JUSTDOIT = function(input)
     input = string.lower(strtrim(input or ""))
     if input == "probe" or input == "leituras" then J.ShowPage("readings"); J.Probe()
     elseif input == "report" or input == "relatorio" then J.ShowReport()
-    elseif input == "config" then J.ShowPage("settings")
+    elseif input == "config" then J.OpenSettings()
     elseif input == "compass" or input == "bussola" then
         J.db.settings.compass = not J.db.settings.compass
         J.LayoutCompass()

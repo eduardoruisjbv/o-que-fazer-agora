@@ -14,4 +14,5 @@ Planner.lua
 Automation.lua
 Compass.lua
 UI.lua
+Settings.lua
 Bootstrap.lua
