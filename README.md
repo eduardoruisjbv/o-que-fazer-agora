@@ -4,7 +4,7 @@ A character-focused World of Warcraft Retail 12.x addon that suggests the next a
 
 ## Delivery status
 
-**0.2.10 — PvP context and item metadata cache update.** Combines three game-data reads with quest guidance. Auto starts enabled by default; quest interactions remain manual in both modes. Full PvE equipment recommendations are still pending.
+**0.2.11 — PvP and navigation fixes.** Combines three game-data reads with quest guidance. Auto starts enabled by default; quest interactions remain manual in both modes. Full PvE equipment recommendations are still pending.
 
 - Open the panel from the minimap or with `/jdi`; there is no login popup. The **Mode: Semi-auto / Auto** selector is at the top, with controls on the Settings tab. The compact circular button uses the native compass icon (FileDataID 4635196).
 - Reads available campaigns, campaigns in the quest log, the current chapter, and blockers.

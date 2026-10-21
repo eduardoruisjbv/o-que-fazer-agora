@@ -89,6 +89,14 @@ function J.UpdateUI()
     if ui.pages.readings:IsShown() then J.UpdateReadingsUI() end
 end
 
+local PVP_LABELS = {
+    queued = "In queue",
+    confirm = "Invitation ready · enter the match",
+    active = "In match",
+}
+-- An invitation needs action now, so it outranks a running match or a queue.
+local PVP_PRIORITY = {confirm = 3, active = 2, queued = 1}
+
 function J.UpdatePvPUI()
     local panel = J.ui and J.ui.pvp
     if not panel then return end
@@ -98,9 +106,9 @@ function J.UpdatePvPUI()
     for index = 1, math.min(maxQueues, 20) do
         local status, mapName = J.Call("GetBattlefieldStatus", GetBattlefieldStatus, index)
         status = J.String(status)
-        if status == "queued" or status == "confirm" or status == "active" then
+        local priority = status and PVP_PRIORITY[status]
+        if priority and (not queue or priority > PVP_PRIORITY[queue.status]) then
             queue = {status = status, mapName = J.String(mapName)}
-            break
         end
     end
 
@@ -109,12 +117,8 @@ function J.UpdatePvPUI()
         return
     end
 
-    local labels = {
-        queued = "Na fila",
-        confirm = "Convite disponível · entre na partida",
-        active = "Em partida",
-    }
-    local detail = queue.mapName and (queue.mapName .. " · " .. labels[queue.status]) or labels[queue.status]
+    local label = PVP_LABELS[queue.status]
+    local detail = queue.mapName and (queue.mapName .. " · " .. label) or label
     panel.status:SetText(detail)
     panel:Show()
 end

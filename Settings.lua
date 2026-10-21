@@ -72,10 +72,7 @@ function J.BuildOptions()
     J.optionsCategory = category
 end
 
+-- J.ShowPage("settings") opens the native category when it is registered.
 function J.OpenSettings()
-    if J.optionsCategory and Settings and Settings.OpenToCategory then
-        Settings.OpenToCategory(J.optionsCategory:GetID())
-    elseif J.ui then
-        J.ShowPage("settings")
-    end
+    J.ShowPage("settings")
 end

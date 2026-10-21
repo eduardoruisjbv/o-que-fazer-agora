@@ -1,3 +1,10 @@
+# Just do it 0.2.11 — PvP and navigation fixes
+
+- The PvP panel shows the most urgent queue: an invitation is no longer hidden behind an earlier queue. PvP labels are in English.
+- A /reload during combat after switching to Semi-auto no longer leaves the addon's map pin behind.
+- Shared item cache v2: correct entry count, per-item invalidation without scanning the whole cache, and a newer version loaded by another addon is never replaced.
+- Regression tests run from any directory again and cover the current Auto default and native supertracking.
+
 # Just do it 0.2.10 — PvP status and item metadata cache
 
 - Show the current PvP queue, ready prompt, or active match in the main panel.

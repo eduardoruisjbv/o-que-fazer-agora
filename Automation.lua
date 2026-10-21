@@ -255,6 +255,9 @@ function J.InitAutomation()
     if position then x, y = J.Call("Waypoint:GetXY", position.GetXY, position) end
     local key = mapID and J.Number(x) and J.Number(y) and string.format("%d:%.6f:%.6f", mapID, x, y)
     if key and key == J.db.nativeWaypointKey then J.nativeKey = key end
+    -- A Semi-auto switch made in combat defers cleanup; a /reload before
+    -- PLAYER_REGEN_ENABLED loses that flag, so restore it from our saved pin.
+    if J.nativeKey and not J.AutoEnabled() then J.directionCleanupPending = true end
     J.directionGranted = J.AutoEnabled() and (J.nativeKey ~= nil
         or not J.Bool(J.API("C_Map", "HasUserWaypoint"))) or nil
 end

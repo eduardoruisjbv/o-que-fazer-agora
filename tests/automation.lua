@@ -55,8 +55,9 @@ C_SuperTrack = {
     SetSuperTrackedQuestID = function(id) Hook(C_SuperTrack, "SetSuperTrackedQuestID", id) end,
 }
 UiMapPoint = {CreateFromCoordinates = function(mapID, x, y) return {mapID = mapID, x = x, y = y} end}
-assert(loadfile("JustDoIt/Core.lua"))("JustDoIt", J)
-assert(loadfile("JustDoIt/Automation.lua"))("JustDoIt", J)
+local root = (arg and arg[0] or ""):match("^(.-)tests/[^/]*$") or ""
+assert(loadfile(root .. "Core.lua"))("JustDoIt", J)
+assert(loadfile(root .. "Automation.lua"))("JustDoIt", J)
 J.InitDB()
 J.InitAutomation()
 local passed = 0
@@ -66,9 +67,9 @@ local function Quest(id, world)
 end
 J.plan = {primary = Quest(1), secondary = Quest(2)}
 J.SyncAutomation()
-Check(not watched[1] and watched[99], "initial auto mode waits for tracking setup")
-J.SetMode("auto")
 Check(J.AutoEnabled() and watched[1] and watched[2], "auto is enabled by default and tracks suggestions")
+J.SetMode("auto")
+Check(watched[1] and watched[2], "re-selecting auto keeps the current marks")
 Check(watched[99] and not J.db.ownedWatches[99], "pre-existing manual mark stays player-owned")
 Check(not J.db.settings.autoRewards, "quest rewards remain player-controlled")
 Check(pinWrites == 0, "auto activation does not overwrite player's pin")
@@ -90,7 +91,13 @@ C_QuestLog.RemoveQuestWatch(5)
 J.SyncAutomation()
 Check(not watched[5], "respect explicit player untracking")
 
+local superTracked = 0
+C_SuperTrack.GetSuperTrackedQuestID = function() return superTracked end
+C_SuperTrack.SetSuperTrackedQuestID = function(id) superTracked = id; Hook(C_SuperTrack, "SetSuperTrackedQuestID", id) end
 J.directionGranted = true
+J.SyncAutomation()
+Check(pinWrites == 0 and superTracked == 5, "accepted quest without fixed point uses native supertracking")
+J.plan.primary.waypointText = "Objective"
 J.SyncAutomation()
 Check(pinWrites == 1 and pin.mapID == 10, "map mutation requires follow grant")
 J.SyncAutomation()

@@ -1,11 +1,12 @@
 -- Pure regression checks, not a WoW client/API simulator.
--- Run from the project root: luajit tests/planner.lua
+-- Run: luajit tests/planner.lua
 local J = {}
 local now, epoch = 0, 100000
 GetTime = function() return now end
 GetServerTime = function() return epoch end
 issecretvalue = function(value) return value == 999999 end
-local function Load(file) assert(loadfile("JustDoIt/" .. file))("JustDoIt", J) end
+local root = (arg and arg[0] or ""):match("^(.-)tests/[^/]*$") or ""
+local function Load(file) assert(loadfile(root .. file))("JustDoIt", J) end
 Load("Core.lua")
 Load("Readings.lua")
 Load("Planner.lua")
