@@ -81,14 +81,17 @@ function J.Replan(force)
             end
         end
     else
-        local stillAvailable = false
+        local stillAvailable, secondary = false, nil
         for _, q in ipairs(J.readings.quests or {}) do
             if q.key == current.primary.key and not J.IsIgnored(q.key) then
                 stillAvailable = true
                 current.primary = q
-                break
+            elseif current.secondary and q.key == current.secondary.key and not J.IsIgnored(q.key) then
+                secondary = q
             end
         end
+        -- A turned-in or removed secondary must not linger while the primary holds.
+        current.secondary = secondary
         if not stillAvailable then J.plan, J.pendingPlan = wanted, nil
         else
             local a, b = current.primary, wanted.primary
