@@ -2,6 +2,7 @@
 ## Title: Just do it
 ## Notes: Campaign and quest guidance with a compass and native Blizzard navigation.
 ## Author: Eduardo Rui
+## X-Curse-Project-ID: 1729337
 ## Version: 0.2.11
 ## IconTexture: 4635196
 ## SavedVariablesPerCharacter: JustDoItDB
