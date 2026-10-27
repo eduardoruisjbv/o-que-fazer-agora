@@ -1,0 +1,110 @@
+{
+  ".github/workflows/curseforge.yml": {
+    "mtime": 1793048421.535534,
+    "seen": 1793061329.691716,
+    "ast_hash": "11948873e094d3063b934784660257c0",
+    "semantic_hash": ""
+  },
+  "Automation.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.691722,
+    "ast_hash": "bc02ba45b8bc5e213cfe3687c7a61424",
+    "semantic_hash": ""
+  },
+  "Bootstrap.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917253,
+    "ast_hash": "f84d79596b9475efb0770cdf678a226c",
+    "semantic_hash": ""
+  },
+  "Compass.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917274,
+    "ast_hash": "30eb9fdaaddd5e608153f633359472d9",
+    "semantic_hash": ""
+  },
+  "Core.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.691729,
+    "ast_hash": "98b3b9d0e9745d57799c0abf2ad20e56",
+    "semantic_hash": ""
+  },
+  "ItemCache.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917312,
+    "ast_hash": "0964cc7fbfd3b84ccd44f2f2710eac83",
+    "semantic_hash": ""
+  },
+  "Journal.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917334,
+    "ast_hash": "3c036285c8c213bb79a0582297425779",
+    "semantic_hash": ""
+  },
+  "JustDoIt.toc": {
+    "mtime": 1793047637.0276773,
+    "seen": 1793061329.6917348,
+    "ast_hash": "488ba494a3f3fb0b1fea52ee64222f4a",
+    "semantic_hash": ""
+  },
+  "Planner.lua": {
+    "mtime": 1793061316.9043703,
+    "seen": 1793061329.6917362,
+    "ast_hash": "9be0d06dcd61b389ab6a3035b49dcdbd",
+    "semantic_hash": ""
+  },
+  "Readings.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917381,
+    "ast_hash": "697143043b0ec456fe746aa0d9687619",
+    "semantic_hash": ""
+  },
+  "Settings.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917396,
+    "ast_hash": "2b13926e7c33eadf861adfec5848ef34",
+    "semantic_hash": ""
+  },
+  "UI.lua": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917415,
+    "ast_hash": "411c739a144e91ec849ff9c8d339c37f",
+    "semantic_hash": ""
+  },
+  "tests/automation.lua": {
+    "mtime": 1792956862.6536734,
+    "seen": 1793061329.6917431,
+    "ast_hash": "bdc9cc3e0dd3414f65bc835f2063868b",
+    "semantic_hash": ""
+  },
+  "tests/planner.lua": {
+    "mtime": 1792956862.6538222,
+    "seen": 1793061329.6917448,
+    "ast_hash": "2f1f9da6f1d15d1612b5e19a43a51f02",
+    "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917465,
+    "ast_hash": "4881497187f7dfa12adf7b7a91c51311",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1792956862.6524215,
+    "seen": 1793061329.6917484,
+    "ast_hash": "1613449bb82b5fe1003a292144036a53",
+    "semantic_hash": ""
+  },
+  "docs/API.md": {
+    "mtime": 1792956862.6534216,
+    "seen": 1793061329.6917498,
+    "ast_hash": "d6f83d889ed8d644ed3af3c574a70e3e",
+    "semantic_hash": ""
+  },
+  "docs/DESIGN.md": {
+    "mtime": 1792956862.6536734,
+    "seen": 1793061329.6917517,
+    "ast_hash": "383bc308eff1b7434bcd8418daa41c15",
+    "semantic_hash": ""
+  }
+}
