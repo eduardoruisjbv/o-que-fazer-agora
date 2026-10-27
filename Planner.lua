@@ -81,10 +81,13 @@ function J.Replan(force)
             end
         end
     else
-        local stillAvailable, secondary = false, nil
+        local stillAvailable, primaryEligible, secondary = false, false, nil
+        local currentMap = J.readings.state.position and J.readings.state.position.mapID
         for _, q in ipairs(J.readings.quests or {}) do
             if q.key == current.primary.key and not J.IsIgnored(q.key) then
                 stillAvailable = true
+                primaryEligible = not (q.instanced and not q.turnIn)
+                    and (q.campaign or q.world and q.mapID == currentMap)
                 current.primary = q
             elseif current.secondary and q.key == current.secondary.key and not J.IsIgnored(q.key) then
                 secondary = q
@@ -92,7 +95,7 @@ function J.Replan(force)
         end
         -- A turned-in or removed secondary must not linger while the primary holds.
         current.secondary = secondary
-        if not stillAvailable then J.plan, J.pendingPlan = wanted, nil
+        if not stillAvailable or not primaryEligible then J.plan, J.pendingPlan = wanted, nil
         else
             local a, b = current.primary, wanted.primary
             local priorityChanged = b and (a.campaign ~= b.campaign or a.turnIn ~= b.turnIn)
